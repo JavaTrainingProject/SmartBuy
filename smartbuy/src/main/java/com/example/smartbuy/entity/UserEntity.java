@@ -12,9 +12,9 @@ public class UserEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(name = "user_name")
-    private String name;
+    private String user_name;
     @Column(name ="user_email" )
-    private String email;
+    private String user_email;
     @Column(name ="user_password" )
     private String password;
     @Enumerated(EnumType.STRING)
@@ -22,11 +22,11 @@ public class UserEntity {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -46,21 +46,20 @@ public class UserEntity {
         this.updatedAt = updatedAt;
     }
 
-
-    public String getName() {
-        return name;
+    public String getUser_name() {
+        return user_name;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setUser_name(String user_name) {
+        this.user_name = user_name;
     }
 
-    public String getEmail() {
-        return email;
+    public String getUser_email() {
+        return user_email;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setUser_email(String user_email) {
+        this.user_email = user_email;
     }
 
     public String getPassword() {
