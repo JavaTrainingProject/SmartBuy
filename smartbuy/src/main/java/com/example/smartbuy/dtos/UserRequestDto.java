@@ -10,7 +10,7 @@ public class UserRequestDto {
     private String user_name;
     @Email(message = "Invalid email format")
     @NotBlank(message = "Email is required")
-    private String user_email;
+    private String email;
     @NotBlank(message="Password is required")
     @Size(min=6, message="Password must be atleast 6 characters")
     private String user_password;
@@ -23,12 +23,12 @@ public class UserRequestDto {
         this.user_name = user_name;
     }
 
-    public String getUser_email() {
-        return user_email;
+    public String getEmail() {
+        return email;
     }
 
-    public void setUser_email(String user_email) {
-        this.user_email = user_email;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getUser_password() {

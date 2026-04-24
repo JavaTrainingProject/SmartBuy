@@ -10,10 +10,8 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
+@RestControllerAdvice
 public class GlobalException {
-
-    @RestControllerAdvice
-    public class GlobalExceptionHandler {
 
         @ExceptionHandler(MethodArgumentNotValidException.class)
         public ResponseEntity<Map<String, Object>> handleValidationException(
@@ -35,6 +33,29 @@ public class GlobalException {
 
             return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
         }
+
+    @ExceptionHandler(UserAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponse> handleUserAlreadyExists(UserAlreadyExistsException ex) {
+
+        ErrorResponse error = new ErrorResponse(
+                ex.getMessage(),
+                HttpStatus.CONFLICT.value(),
+                LocalDateTime.now()
+        );
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+    }
+
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidCredentials(InvalidCredentialsException ex) {
+        ErrorResponse error = new ErrorResponse(
+                ex.getMessage(),
+                HttpStatus.UNAUTHORIZED.value(),
+                LocalDateTime.now()
+        );
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
+    }
 
         @ExceptionHandler(RuntimeException.class)
         public ResponseEntity<Map<String, Object>> handleRuntimeException(RuntimeException ex) {
@@ -71,4 +92,4 @@ public class GlobalException {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
         }
     }
-}
+
