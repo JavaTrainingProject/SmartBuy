@@ -1,11 +1,14 @@
 package com.example.smartbuy.dtos;
 
+import com.example.smartbuy.enums.Status;
+
 public class SubCategoryResponseDto {
     private Long id;
     private String subCategoryName;
     private String subCategoryDescription;
     private Long categoryId;
     private String categoryName;
+    private Status status;
 
     public String getSubCategoryName() {
         return subCategoryName;
@@ -45,5 +48,13 @@ public class SubCategoryResponseDto {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
     }
 }
