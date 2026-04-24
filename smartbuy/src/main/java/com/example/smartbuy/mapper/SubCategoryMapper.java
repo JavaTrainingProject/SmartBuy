@@ -7,7 +7,6 @@ import com.example.smartbuy.enums.Status;
 
 public class SubCategoryMapper {
 
-    // ENTITY -> DTO
     public static SubCategoryResponseDto toDto(SubCategoryEntity sub) {
 
         SubCategoryResponseDto dto = new SubCategoryResponseDto();
@@ -25,7 +24,6 @@ public class SubCategoryMapper {
         return dto;
     }
 
-    // DTO -> ENTITY
     public static SubCategoryEntity toEntity(SubCategoryRequestDto dto) {
 
         SubCategoryEntity sub = new SubCategoryEntity();
@@ -33,7 +31,6 @@ public class SubCategoryMapper {
         sub.setSubCategoryName(dto.getSubCategoryName());
         sub.setSubCategoryDescription(dto.getSubCategoryDescription());
 
-        // ⭐ IMPORTANT: default status
         sub.setStatus(Status.ACTIVE);
 
         return sub;
