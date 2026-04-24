@@ -13,7 +13,6 @@ public class CategoryMapper {
         dto.setId(categoryEntity.getId());
         dto.setCategoryName(categoryEntity.getCategoryName());
         dto.setCategoryDescription(categoryEntity.getCategoryDescription());
-
         dto.setCreatedAt(categoryEntity.getCreatedAt());
         dto.setUpdatedAt(categoryEntity.getUpdatedAt());
 

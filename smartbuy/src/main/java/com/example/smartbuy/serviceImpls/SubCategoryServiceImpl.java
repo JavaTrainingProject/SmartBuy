@@ -1,15 +1,23 @@
 package com.example.smartbuy.serviceImpls;
 
+import com.example.smartbuy.ApiResponse;
 import com.example.smartbuy.dtos.SubCategoryRequestDto;
 import com.example.smartbuy.dtos.SubCategoryResponseDto;
 import com.example.smartbuy.entity.CategoryEntity;
 import com.example.smartbuy.entity.SubCategoryEntity;
 import com.example.smartbuy.enums.Status;
+import com.example.smartbuy.exception.ResourceNotFoundException;
 import com.example.smartbuy.mapper.SubCategoryMapper;
 import com.example.smartbuy.repository.CategoryRepository;
 import com.example.smartbuy.repository.SubCategoryRepository;
 import com.example.smartbuy.service.SubCategoryService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class SubCategoryServiceImpl implements SubCategoryService {
@@ -45,4 +53,85 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 
         return SubCategoryMapper.toDto(saved);
     }
+    @Override
+    public SubCategoryResponseDto getSubCategoryById(Long id) {
+        SubCategoryEntity subCategoryEntity = subCategoryRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("SubCategory", "id", id));
+        return SubCategoryMapper.toDto(subCategoryEntity);
+    }
+
+    @Override
+    public ApiResponse<List<SubCategoryResponseDto>> getAllActiveSubCategories(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
+
+        Page<SubCategoryEntity> subCategoryPage = subCategoryRepository.findByStatus(Status.ACTIVE,pageable);
+
+        List<SubCategoryResponseDto> responseList = subCategoryPage.getContent()
+                .stream()
+                .map(SubCategoryMapper::toDto)
+                .toList();
+
+        return new ApiResponse<>(
+                "Active subcategories fetched successfully",true,responseList
+        );
+    }
+
+    @Override
+    public ApiResponse<List<SubCategoryResponseDto>> getActiveSubCategoriesByCategory(Long categoryId, int page, int size) {
+
+        CategoryEntity category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new ResourceNotFoundException("Category", "id", categoryId));
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
+
+        Page<SubCategoryEntity> subCategoryPage =
+                subCategoryRepository.findByCategoryIdAndStatus(
+                        categoryId,
+                        Status.ACTIVE,
+                        pageable
+                );
+
+        List<SubCategoryResponseDto> responseList = subCategoryPage.getContent()
+                .stream()
+                .map(SubCategoryMapper::toDto)
+                .toList();
+
+        return new ApiResponse<>(
+                "Active subcategories fetched successfully",
+                true,
+                responseList
+        );
+    }
+
+    @Override
+    public ApiResponse<String> updateSubCategoryStatus(Long id, Status status) {
+        SubCategoryEntity subCategory = subCategoryRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("SubCategory", "id", id));
+        subCategory.setStatus(status);
+
+        subCategoryRepository.save(subCategory);
+
+        return new ApiResponse<>(
+                "SubCategory status updated successfully",
+                true,
+                "DONE"
+        );
+    }
+
+    @Override
+    public SubCategoryResponseDto updateSubCategory(Long id, SubCategoryRequestDto dto) {
+        SubCategoryEntity subCategoryEntity = subCategoryRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("SubCategory", "id", id));
+
+        CategoryEntity categoryEntity = categoryRepository.findById(dto.getCategoryId())
+                .orElseThrow(() -> new ResourceNotFoundException("Category", "id", dto.getCategoryId()));
+
+        subCategoryEntity.setSubCategoryName(dto.getSubCategoryName());
+        subCategoryEntity.setSubCategoryDescription(dto.getSubCategoryDescription());
+        subCategoryEntity.setCategory(categoryEntity);
+
+        SubCategoryEntity updated = subCategoryRepository.save(subCategoryEntity);
+        return SubCategoryMapper.toDto(updated);
+    }
+
 }

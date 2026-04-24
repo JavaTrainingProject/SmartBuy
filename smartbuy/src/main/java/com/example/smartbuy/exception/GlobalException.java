@@ -1,5 +1,6 @@
 package com.example.smartbuy.exception;
 
+import com.example.smartbuy.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -13,7 +14,7 @@ public class GlobalException {
 
     @RestControllerAdvice
     public class GlobalExceptionHandler {
-        
+
         @ExceptionHandler(MethodArgumentNotValidException.class)
         public ResponseEntity<Map<String, Object>> handleValidationException(
                 MethodArgumentNotValidException ex) {
@@ -57,6 +58,17 @@ public class GlobalException {
             error.put("message", ex.getMessage());
 
             return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        @ExceptionHandler(ResourceNotFoundException.class)
+        public ResponseEntity<ErrorResponse> handleResourceNotFound(ResourceNotFoundException ex) {
+
+            ErrorResponse error = new ErrorResponse(
+                    ex.getMessage(),
+                    HttpStatus.NOT_FOUND.value(),
+                    LocalDateTime.now()
+            );
+
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
         }
     }
 }
