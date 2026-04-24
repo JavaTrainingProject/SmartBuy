@@ -1,90 +1,52 @@
 package com.example.smartbuy.dtos;
 
 import java.time.LocalDateTime;
+import java.util.List;
+
 
 public class ProductResponseDto {
+
     private Long id;
-    private String imageFile;
+
+    private String productName;
+    private String productDescription;
+
+    private Double price;
+    private Integer quantity;
+
     private String categoryName;
     private String subCategoryName;
 
+    private List<String> imageUrls;
+
     private LocalDateTime createdAt;
 
-    public String getName() {
-        return name;
-    }
+    // getters and setters
 
-    public void setName(String name) {
-        this.name = name;
-    }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public Long getId() {
-        return id;
-    }
+    public String getProductName() { return productName; }
+    public void setProductName(String productName) { this.productName = productName; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public String getProductDescription() { return productDescription; }
+    public void setProductDescription(String productDescription) { this.productDescription = productDescription; }
 
-    public String getDescription() {
-        return description;
-    }
+    public Double getPrice() { return price; }
+    public void setPrice(Double price) { this.price = price; }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+    public Integer getQuantity() { return quantity; }
+    public void setQuantity(Integer quantity) { this.quantity = quantity; }
 
-    public double getPrice() {
-        return price;
-    }
+    public String getCategoryName() { return categoryName; }
+    public void setCategoryName(String categoryName) { this.categoryName = categoryName; }
 
-    public void setPrice(double price) {
-        this.price = price;
-    }
+    public String getSubCategoryName() { return subCategoryName; }
+    public void setSubCategoryName(String subCategoryName) { this.subCategoryName = subCategoryName; }
 
-    public int getQuantity() {
-        return quantity;
-    }
+    public List<String> getImageUrls() { return imageUrls; }
+    public void setImageUrls(List<String> imageUrls) { this.imageUrls = imageUrls; }
 
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
-
-    public String getCategoryName() {
-        return categoryName;
-    }
-
-    public void setCategoryName(String categoryName) {
-        this.categoryName = categoryName;
-    }
-
-    public String getSubCategoryName() {
-        return subCategoryName;
-    }
-
-    public void setSubCategoryName(String subCategoryName) {
-        this.subCategoryName = subCategoryName;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    private String name;
-    private String description;
-
-    private double price;
-    private int quantity;
-
-    public String getImageFile() {
-        return imageFile;
-    }
-
-    public void setImageFile(String imageFile) {
-        this.imageFile = imageFile;
-    }
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 }

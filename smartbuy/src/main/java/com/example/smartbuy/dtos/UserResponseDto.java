@@ -4,6 +4,7 @@ import com.example.smartbuy.enums.Role;
 import java.time.LocalDateTime;
 
 public class UserResponseDto {
+
     private Long id;
     private String user_name;
     private String user_email;

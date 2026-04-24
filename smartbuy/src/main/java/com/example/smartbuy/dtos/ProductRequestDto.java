@@ -1,21 +1,21 @@
 package com.example.smartbuy.dtos;
 
+import jakarta.validation.constraints.*;
+
+import java.util.List;
+
 public class ProductRequestDto {
+
+    @NotBlank(message = "Name is required")
+    @Size(min = 3, max = 50, message = "Name must be 3-50 characters")
     private String product_name;
+
     private String product_description;
-    private double product_price;
-    private int quantity;
-    private String imageFile;
+    private Double product_price;
+    private Integer quantity;
+
     private Long categoryId;
     private Long subCategoryId;
-
-    public String getImageFile() {
-        return imageFile;
-    }
-
-    public void setImageFile(String imageFile) {
-        this.imageFile = imageFile;
-    }
 
     public String getProduct_name() {
         return product_name;
@@ -33,19 +33,19 @@ public class ProductRequestDto {
         this.product_description = product_description;
     }
 
-    public double getProduct_price() {
+    public Double getProduct_price() {
         return product_price;
     }
 
-    public void setProduct_price(double product_price) {
+    public void setProduct_price(Double product_price) {
         this.product_price = product_price;
     }
 
-    public int getQuantity() {
+    public Integer getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(int quantity) {
+    public void setQuantity(Integer quantity) {
         this.quantity = quantity;
     }
 
@@ -64,4 +64,15 @@ public class ProductRequestDto {
     public void setSubCategoryId(Long subCategoryId) {
         this.subCategoryId = subCategoryId;
     }
+
+    public List<String> getImageUrls() {
+        return imageUrls;
+    }
+
+    public void setImageUrls(List<String> imageUrls) {
+        this.imageUrls = imageUrls;
+    }
+
+    private List<String> imageUrls;
+
 }

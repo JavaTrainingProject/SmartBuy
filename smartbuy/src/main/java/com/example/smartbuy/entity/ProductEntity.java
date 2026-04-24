@@ -1,12 +1,13 @@
 package com.example.smartbuy.entity;
 
 import jakarta.persistence.*;
-
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "Products")
 public class ProductEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "product_id")
@@ -15,14 +16,22 @@ public class ProductEntity {
     private String productName;
     @Column(name = "product_description")
     private String productDescription;
-    private double price;
-    private int quantity;
-    private String imageFile;
+    private Double price;
+    private Integer quantity;
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    private List<ProductImage> images;
+
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
     @ManyToOne
     @JoinColumn(name = "subcategory_id")
     private SubCategoryEntity subCategory;
+
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private CategoryEntity category;
 
     public SubCategoryEntity getSubCategory() {
         return subCategory;
@@ -31,15 +40,6 @@ public class ProductEntity {
     public void setSubCategory(SubCategoryEntity subCategory) {
         this.subCategory = subCategory;
     }
-
-    public String getImageFile() {
-        return imageFile;
-    }
-
-    public void setImageFile(String imageFile) {
-        this.imageFile = imageFile;
-    }
-
 
     public Long getId() {
         return id;
@@ -65,19 +65,19 @@ public class ProductEntity {
         this.productDescription = productDescription;
     }
 
-    public double getPrice() {
+    public Double getPrice() {
         return price;
     }
 
-    public void setPrice(double price) {
+    public void setPrice(Double price) {
         this.price = price;
     }
 
-    public int getQuantity() {
+    public Integer getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(int quantity) {
+    public void setQuantity(Integer quantity) {
         this.quantity = quantity;
     }
 
@@ -95,6 +95,21 @@ public class ProductEntity {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public CategoryEntity getCategory() {
+        return category;
+    }
+
+    public void setCategory(CategoryEntity category) {
+        this.category = category;
+    }
+
+    public List<ProductImage> getImages() {return images;
+    }
+
+    public void setImages(List<ProductImage> images) {
+        this.images = images;
     }
 
 }
