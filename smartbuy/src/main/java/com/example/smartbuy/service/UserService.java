@@ -2,6 +2,8 @@ package com.example.smartbuy.service;
 
 import com.example.smartbuy.dtos.*;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface UserService {
     UserResponseDto registerUser(UserRequestDto dto);
@@ -11,6 +13,14 @@ public interface UserService {
     LoginResponseDto login(LoginRequestDto dto);
 
     LoginResponseDto refreshToken(RefreshRequestDto dto);
+
+    Page<UserResponseDto> getAllUsers(Pageable pageable);
+
+    UserResponseDto getUserById(Long id);
+
+    UserResponseDto updateUser(Long id, UserUpdateRequestDto dto);
+
+    void deleteUser(Long id);
 
     MessageResponseDto logout(HttpServletRequest request);
 }

@@ -23,6 +23,7 @@ public class CategoryEntity {
     private Status status;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SubCategoryEntity> subCategories = new ArrayList<>();
 
@@ -81,5 +82,6 @@ public class CategoryEntity {
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
+
 
 }

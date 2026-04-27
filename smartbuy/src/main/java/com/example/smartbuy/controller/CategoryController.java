@@ -35,4 +35,9 @@ public class CategoryController {
                 categoryService.getAllCategories(page, size)
         );
     }
+
+    @GetMapping("/count")
+    public ResponseEntity<Long> getActiveCategoryCount() {
+        return ResponseEntity.ok(categoryService.getActiveCategoryCount());
+    }
 }

@@ -3,9 +3,11 @@ package com.example.smartbuy.mapper;
 import com.example.smartbuy.dtos.UserRequestDto;
 import com.example.smartbuy.dtos.UserResponseDto;
 import com.example.smartbuy.entity.UserEntity;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
+@Component
 public class UserMapper {
     public static UserEntity toEntity(UserRequestDto dto) {
         UserEntity user = new UserEntity();
@@ -16,7 +18,7 @@ public class UserMapper {
         return user;
     }
 
-    public static UserResponseDto toDto(UserEntity user) {
+    public UserResponseDto toDto(UserEntity user) {
         UserResponseDto dto = new UserResponseDto();
         dto.setId(user.getId());
         dto.setUser_name(user.getUser_name());
