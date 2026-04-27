@@ -14,5 +14,5 @@ public interface UserRepository extends JpaRepository<UserEntity,Long> {
 
         Optional <UserEntity> findByRefreshToken(String refreshtoken);
 
-
+        boolean existsByEmail(String email);
 }

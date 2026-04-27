@@ -1,6 +1,7 @@
 package com.example.smartbuy.repository;
 
 import com.example.smartbuy.entity.CategoryEntity;
+import com.example.smartbuy.enums.Status;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -9,4 +10,5 @@ public interface CategoryRepository extends JpaRepository<CategoryEntity,Long> {
 
     boolean existsByCategoryNameIgnoreCase(String categoryName);
 
+    Long countByStatus(Status status);
 }

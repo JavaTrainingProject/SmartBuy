@@ -11,4 +11,6 @@ public interface CategoryService {
     CategoryResponseDto createCategory(CategoryRequestDto dto);
 
     ApiResponse<List<CategoryResponseDto>> getAllCategories(int page, int size);
+
+    Long getActiveCategoryCount();
 }

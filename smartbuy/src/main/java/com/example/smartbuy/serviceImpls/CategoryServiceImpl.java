@@ -59,4 +59,9 @@ public class CategoryServiceImpl implements CategoryService {
                 "Categories fetched successfully",true,responseList
         );
     }
+
+    @Override
+    public Long getActiveCategoryCount() {
+        return categoryRepository.countByStatus(Status.ACTIVE);
+    }
 }
