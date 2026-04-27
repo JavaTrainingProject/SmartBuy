@@ -4,11 +4,13 @@ import com.example.smartbuy.dtos.*;
 import com.example.smartbuy.entity.UserEntity;
 import com.example.smartbuy.enums.Role;
 import com.example.smartbuy.exception.InvalidCredentialsException;
+import com.example.smartbuy.exception.ResourceNotFoundException;
 import com.example.smartbuy.exception.UserAlreadyExistsException;
 import com.example.smartbuy.mapper.UserMapper;
 import com.example.smartbuy.repository.UserRepository;
 import com.example.smartbuy.service.UserService;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.authentication.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -112,5 +114,25 @@ public class UserImpl implements UserService {
         response.setRole(user.getRole());
 
         return response;
+    }
+
+    public MessageResponseDto logout(HttpServletRequest request){
+
+        String authHeader=request.getHeader("Authorization");
+
+        if(authHeader==null || !authHeader.startsWith("Bearer ")){
+            throw new InvalidCredentialsException("Token is missing or invalid");
+        }
+
+        String token=authHeader.substring(7);
+        String email=jwtService.extractClaims(token).getSubject();
+
+        UserEntity user=userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User","email",email));
+
+        user.setRefreshToken(null);
+        userRepository.save(user);
+
+        return new MessageResponseDto("Logged out successfully");
     }
 }
