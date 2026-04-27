@@ -2,6 +2,7 @@ package com.example.smartbuy.controller;
 
 import com.example.smartbuy.dtos.*;
 import com.example.smartbuy.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,6 +34,11 @@ public class AuthController {
     @PostMapping("/refreshToken")
     public LoginResponseDto refreshToken(@Valid @RequestBody RefreshRequestDto dto) {
         return userService.refreshToken(dto);
+    }
+
+    @PostMapping("/logout")
+    public MessageResponseDto logout(HttpServletRequest request){
+        return userService.logout(request);
     }
 }
 
