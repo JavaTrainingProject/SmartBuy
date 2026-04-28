@@ -1,6 +1,6 @@
 package com.example.smartbuy.controller;
 
-import com.example.smartbuy.ApiResponse;
+import com.example.smartbuy.response.ApiResponse;
 import com.example.smartbuy.dtos.ProductRequestDto;
 import com.example.smartbuy.dtos.ProductResponseDto;
 import com.example.smartbuy.service.ProductService;
@@ -11,7 +11,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.util.List;
+
 
 @Validated
 @RestController
@@ -40,7 +42,7 @@ public class ProductController {
         ProductResponseDto response =
                 productService.createProduct(dto, images);
 
-        return ResponseEntity.ok(new ApiResponse<>("Product created successfully", true, response));
+        return ResponseEntity.ok(new ApiResponse<>("SUCCESS","Product created successfully",  response));
     }
 
 
@@ -52,7 +54,7 @@ public class ProductController {
 
         Page<ProductResponseDto> response = productService.getAllProducts(page, size);
 
-        return ResponseEntity.ok(new ApiResponse<>("Products fetched successfully", true, response));
+        return ResponseEntity.ok(new ApiResponse<>("SUCCESS","Products fetched successfully",  response));
     }
 
 
@@ -62,7 +64,7 @@ public class ProductController {
 
         ProductResponseDto response = productService.getProductById(id);
 
-        return ResponseEntity.ok(new ApiResponse<>("Product fetched successfully", true, response));
+        return ResponseEntity.ok(new ApiResponse<>("SUCCESS","Product fetched successfully",  response));
     }
 
 
@@ -79,7 +81,7 @@ public class ProductController {
         ProductResponseDto response =
                 productService.updateProduct(id, dto, images);
 
-        return ResponseEntity.ok(new ApiResponse<>("Product updated successfully", true, response));
+        return ResponseEntity.ok(new ApiResponse<>("SUCCESS","Product updated successfully",  response));
     }
 
 
@@ -89,7 +91,7 @@ public class ProductController {
 
         String message = productService.deleteProduct(id);
 
-        return ResponseEntity.ok(new ApiResponse<>(message, true, null));
+        return ResponseEntity.ok(new ApiResponse<>("SUCCESS",message,  null));
     }
 
 
@@ -101,7 +103,20 @@ public class ProductController {
 
         String response = productService.updateProductStatus(id, status);
 
-        return ResponseEntity.ok(new ApiResponse<>(response, true, null));
+        return ResponseEntity.ok(
+                new ApiResponse<>("SUCCESS", "Status updated successfully", response)
+        );
+    }
+    @GetMapping("/status")
+    public ResponseEntity<ApiResponse<List<ProductResponseDto>>> getProductsByStatus(
+            @RequestParam String status) {
+
+        List<ProductResponseDto> response =
+                productService.getProductsByStatus(status);
+
+        return ResponseEntity.ok(
+                new ApiResponse<>("SUCCESS", "Products fetched successfully", response)
+        );
     }
 
 }

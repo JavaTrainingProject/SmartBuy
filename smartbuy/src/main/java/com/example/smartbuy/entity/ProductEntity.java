@@ -1,5 +1,6 @@
 package com.example.smartbuy.entity;
 
+import com.example.smartbuy.enums.ProductStatus;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -50,7 +51,7 @@ public class ProductEntity {
     private CategoryEntity category;
 
     @Enumerated(EnumType.STRING)
-    private ProductStatus status;
+    private ProductStatus status=ProductStatus.ACTIVE;
 
     public ProductStatus getStatus() {return status;}
 
@@ -72,11 +73,11 @@ public class ProductEntity {
 
     public void setProductDescription(String productDescription) {this.productDescription = productDescription;}
 
-    public double getPrice() {return price;}
+    public Double getPrice() {return price;}
 
     public void setPrice(Double price) {this.price = price;}
 
-    public int getQuantity() {return quantity;}
+    public Integer getQuantity() {return quantity;}
 
     public void setQuantity(Integer quantity) {this.quantity = quantity;}
 

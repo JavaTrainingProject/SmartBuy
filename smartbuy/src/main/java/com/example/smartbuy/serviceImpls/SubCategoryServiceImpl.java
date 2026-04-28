@@ -1,6 +1,5 @@
 package com.example.smartbuy.serviceImpls;
 
-import com.example.smartbuy.ApiResponse;
 import com.example.smartbuy.dtos.SubCategoryRequestDto;
 import com.example.smartbuy.dtos.SubCategoryResponseDto;
 import com.example.smartbuy.entity.CategoryEntity;
@@ -10,6 +9,7 @@ import com.example.smartbuy.exception.ResourceNotFoundException;
 import com.example.smartbuy.mapper.SubCategoryMapper;
 import com.example.smartbuy.repository.CategoryRepository;
 import com.example.smartbuy.repository.SubCategoryRepository;
+import com.example.smartbuy.response.ApiResponse;
 import com.example.smartbuy.service.SubCategoryService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -71,8 +71,8 @@ public class SubCategoryServiceImpl implements SubCategoryService {
                 .map(SubCategoryMapper::toDto)
                 .toList();
 
-        return new ApiResponse<>(
-                "Active subcategories fetched successfully",true,responseList
+        return new ApiResponse<>("SUCCES",
+                "Active subcategories fetched successfully",responseList
         );
     }
 
@@ -96,11 +96,9 @@ public class SubCategoryServiceImpl implements SubCategoryService {
                 .map(SubCategoryMapper::toDto)
                 .toList();
 
-        return new ApiResponse<>(
+        return new ApiResponse<>("SUCCESS",
                 "Active subcategories fetched successfully",
-                true,
-                responseList
-        );
+                 responseList);
     }
 
     @Override

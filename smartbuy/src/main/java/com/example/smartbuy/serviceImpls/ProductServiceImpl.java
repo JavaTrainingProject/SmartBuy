@@ -3,6 +3,7 @@ package com.example.smartbuy.serviceImpls;
 import com.example.smartbuy.dtos.ProductRequestDto;
 import com.example.smartbuy.dtos.ProductResponseDto;
 import com.example.smartbuy.entity.*;
+import com.example.smartbuy.enums.ProductStatus;
 import com.example.smartbuy.exception.ResourceNotFoundException;
 import com.example.smartbuy.repository.CategoryRepository;
 import com.example.smartbuy.repository.ProductImageRepository;
@@ -11,7 +12,6 @@ import com.example.smartbuy.repository.SubCategoryRepository;
 import com.example.smartbuy.service.ProductService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
@@ -51,13 +51,14 @@ public class ProductServiceImpl implements ProductService {
                 .orElseThrow(() -> new ResourceNotFoundException("SubCategory not found"));
 
         ProductEntity product = new ProductEntity();
+
         product.setProductName(dto.getProduct_name());
         product.setProductDescription(dto.getProduct_description());
         product.setPrice(dto.getProduct_price());
         product.setQuantity(dto.getQuantity());
         product.setCategory(category);
         product.setSubCategory(subCategory);
-        product.setCreatedAt(LocalDateTime.now());
+        product.setStatus((ProductStatus.ACTIVE));
 
         product.setImageUrl(uploadImage(image));
 
@@ -129,7 +130,7 @@ public class ProductServiceImpl implements ProductService {
         ProductStatus productStatus;
 
         try {
-            productStatus = ProductStatus.valueOf(status.toUpperCase());
+            productStatus = ProductStatus.valueOf(status.trim().toUpperCase());
         } catch (Exception e) {
             throw new IllegalArgumentException("Invalid status. Use ACTIVE or INACTIVE");
         }
@@ -227,4 +228,21 @@ public class ProductServiceImpl implements ProductService {
 
         return dto;
     }
+
+@Override
+public List<ProductResponseDto> getProductsByStatus(String status) {
+
+    ProductStatus productStatus;
+
+    try {
+        productStatus = ProductStatus.valueOf(status.toUpperCase());
+    } catch (Exception e) {
+        throw new IllegalArgumentException("Invalid status. Use ACTIVE or INACTIVE");
+    }
+
+    return productRepository.findByStatus(productStatus)
+            .stream()
+            .map(this::mapToResponse)
+            .toList();
+}
 }

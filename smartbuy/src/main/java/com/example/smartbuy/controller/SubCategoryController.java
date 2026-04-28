@@ -1,9 +1,9 @@
 package com.example.smartbuy.controller;
 
-import com.example.smartbuy.ApiResponse;
 import com.example.smartbuy.dtos.SubCategoryRequestDto;
 import com.example.smartbuy.dtos.SubCategoryResponseDto;
 import com.example.smartbuy.dtos.UpdateStatusRequestDto;
+import com.example.smartbuy.response.ApiResponse;
 import com.example.smartbuy.service.SubCategoryService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -70,10 +70,11 @@ public class SubCategoryController {
             @PathVariable Long id,
             @Valid @RequestBody SubCategoryRequestDto dto) {
 
-        SubCategoryResponseDto response = subCategoryService.updateSubCategory(id, dto);
+        SubCategoryResponseDto response =
+                subCategoryService.updateSubCategory(id, dto);
 
         return ResponseEntity.ok(
-                new ApiResponse<>("SubCategory updated successfully", true, (List<SubCategoryResponseDto>) response)
+                new ApiResponse<>("SUCCESS", "SubCategory updated successfully", response)
         );
     }
 

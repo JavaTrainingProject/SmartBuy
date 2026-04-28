@@ -14,7 +14,7 @@ public class ProductMapper {
             dto.setDescription(entity.getProductDescription()); // IMPORTANT
             dto.setPrice(entity.getPrice());
             dto.setQuantity(entity.getQuantity());
-            dto.setImageFile(entity.getImageFile());
+            dto.setImageUrls(entity.getImageUrl());
             dto.setCreatedAt(entity.getCreatedAt());
 
             if (entity.getSubCategory() != null) {
