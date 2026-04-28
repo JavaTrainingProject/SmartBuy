@@ -6,90 +6,65 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
-
 @RestControllerAdvice
 public class GlobalException {
 
-        @ExceptionHandler(MethodArgumentNotValidException.class)
-        public ResponseEntity<Map<String, Object>> handleValidationException(
-                MethodArgumentNotValidException ex) {
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorResponse> handleValidationException(
+            MethodArgumentNotValidException ex) {
 
-            Map<String, Object> error = new HashMap<>();
-            error.put("timestamp", LocalDateTime.now());
-            error.put("status", HttpStatus.BAD_REQUEST.value());
-            error.put("error", "Validation Error");
-
-            String message = ex.getBindingResult()
-                    .getFieldErrors()
-                    .stream()
-                    .findFirst()
-                    .map(e -> e.getDefaultMessage())
-                    .orElse("Validation failed");
-
-            error.put("message", message);
-
-            return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
-        }
-
-    @ExceptionHandler(UserAlreadyExistsException.class)
-    public ResponseEntity<ErrorResponse> handleUserAlreadyExists(UserAlreadyExistsException ex) {
+        String message = ex.getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .findFirst()
+                .map(e -> e.getDefaultMessage())
+                .orElse("Validation failed");
 
         ErrorResponse error = new ErrorResponse(
-                ex.getMessage(),
-                HttpStatus.CONFLICT.value(),
-                LocalDateTime.now()
+                "error",
+                message,
+                HttpStatus.BAD_REQUEST.value()
         );
 
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(InvalidCredentialsException.class)
-    public ResponseEntity<ErrorResponse> handleInvalidCredentials(InvalidCredentialsException ex) {
+    @ExceptionHandler(CategoryAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponse> handleCategoryAlreadyExists(
+            CategoryAlreadyExistsException ex) {
+
         ErrorResponse error = new ErrorResponse(
+                "error",
                 ex.getMessage(),
-                HttpStatus.UNAUTHORIZED.value(),
-                LocalDateTime.now()
+                HttpStatus.BAD_REQUEST.value()
         );
 
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
-        @ExceptionHandler(RuntimeException.class)
-        public ResponseEntity<Map<String, Object>> handleRuntimeException(RuntimeException ex) {
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<ErrorResponse> handleRuntimeException(RuntimeException ex) {
 
-            Map<String, Object> error = new HashMap<>();
-            error.put("timestamp", LocalDateTime.now());
-            error.put("status", HttpStatus.BAD_REQUEST.value());
-            error.put("error", "Bad Request");
-            error.put("message", ex.getMessage());
+        ErrorResponse error = new ErrorResponse(
+                "error",
+                ex.getMessage(),
+                HttpStatus.BAD_REQUEST.value()
+        );
 
-            return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
-        }
-
-        @ExceptionHandler(Exception.class)
-        public ResponseEntity<Map<String, Object>> handleGlobalException(Exception ex) {
-
-            Map<String, Object> error = new HashMap<>();
-            error.put("timestamp", LocalDateTime.now());
-            error.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
-            error.put("error", "Internal Server Error");
-            error.put("message", ex.getMessage());
-
-            return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        @ExceptionHandler(ResourceNotFoundException.class)
-        public ResponseEntity<ErrorResponse> handleResourceNotFound(ResourceNotFoundException ex) {
-
-            ErrorResponse error = new ErrorResponse(
-                    ex.getMessage(),
-                    HttpStatus.NOT_FOUND.value(),
-                    LocalDateTime.now()
-            );
-
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
-        }
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleGlobalException(Exception ex) {
+
+        ex.printStackTrace();
+
+        ErrorResponse error = new ErrorResponse(
+                "error",
+                ex.getMessage(),
+                HttpStatus.INTERNAL_SERVER_ERROR.value()
+        );
+
+        return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+}
 
