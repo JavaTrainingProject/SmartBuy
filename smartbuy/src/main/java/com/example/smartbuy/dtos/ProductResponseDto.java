@@ -1,10 +1,15 @@
 package com.example.smartbuy.dtos;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class ProductResponseDto {
     private Long id;
-    private String imageFile;
+    private String name;
+    private String description;
+    private Double price;
+    private Integer quantity;
+    private String imageUrls;
     private String categoryName;
     private String subCategoryName;
 
@@ -34,19 +39,19 @@ public class ProductResponseDto {
         this.description = description;
     }
 
-    public double getPrice() {
+    public Double getPrice() {
         return price;
     }
 
-    public void setPrice(double price) {
+    public void setPrice(Double price) {
         this.price = price;
     }
 
-    public int getQuantity() {
+    public Integer getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(int quantity) {
+    public void setQuantity(Integer quantity) {
         this.quantity = quantity;
     }
 
@@ -74,17 +79,7 @@ public class ProductResponseDto {
         this.createdAt = createdAt;
     }
 
-    private String name;
-    private String description;
+    public String getImageUrls() { return imageUrls; }
 
-    private double price;
-    private int quantity;
-
-    public String getImageFile() {
-        return imageFile;
-    }
-
-    public void setImageFile(String imageFile) {
-        this.imageFile = imageFile;
-    }
+    public void setImageUrls(String imageUrls) { this.imageUrls = imageUrls; }
 }
