@@ -1,4 +1,4 @@
-package com.example.smartbuy;
+package com.example.smartbuy.response;
 
 import java.time.LocalDateTime;
 

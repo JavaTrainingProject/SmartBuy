@@ -1,9 +1,10 @@
 package com.example.smartbuy.controller;
 
-import com.example.smartbuy.ApiResponse;
+import com.example.smartbuy.response.ApiResponse;
 import com.example.smartbuy.dtos.*;
 import com.example.smartbuy.service.CategoryService;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,7 +21,7 @@ public class CategoryController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ApiResponse<CategoryResponseDto> create(@RequestBody CategoryRequestDto dto) {
+    public CategoryResponseDto create(@RequestBody CategoryRequestDto dto) {
         return categoryService.createCategory(dto);
     }
 
@@ -56,5 +57,10 @@ public class CategoryController {
     @GetMapping("/active-products")
     public ApiResponse<List<CategoryWithProductsResponseDto>> getActiveWithProducts() {
         return categoryService.getActiveCategoriesWithProducts();
+    }
+
+    @GetMapping("/count")
+    public ResponseEntity<Long> getActiveCategoryCount() {
+        return ResponseEntity.ok(categoryService.getActiveCategoryCount());
     }
 }

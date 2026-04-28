@@ -1,4 +1,4 @@
-package com.example.smartbuy;
+package com.example.smartbuy.response;
 
 import com.example.smartbuy.dtos.SubCategoryResponseDto;
 
@@ -9,7 +9,7 @@ public class ApiResponse<T> {
     private String message;
     private T data;
 
-    public ApiResponse(String activeSubcategoriesFetchedSuccessfully, boolean b, List<SubCategoryResponseDto> responseList) {
+    public ApiResponse() {
 
     }
 

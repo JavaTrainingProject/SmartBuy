@@ -1,6 +1,6 @@
 package com.example.smartbuy.service;
 
-import com.example.smartbuy.ApiResponse;
+import com.example.smartbuy.response.ApiResponse;
 import com.example.smartbuy.dtos.CategoryRequestDto;
 import com.example.smartbuy.dtos.CategoryResponseDto;
 import com.example.smartbuy.dtos.CategoryWithProductsResponseDto;
@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface CategoryService {
 
-    ApiResponse<CategoryResponseDto> createCategory(CategoryRequestDto dto);
+    CategoryResponseDto createCategory(CategoryRequestDto dto);
 
     ApiResponse<CategoryResponseDto> getCategoryById(Long id);
 
@@ -20,4 +20,7 @@ public interface CategoryService {
     ApiResponse<?> getActiveCategories(int page, int size, String sortBy, String direction);
 
     ApiResponse<List<CategoryWithProductsResponseDto>> getActiveCategoriesWithProducts();
+    ApiResponse<List<CategoryResponseDto>> getAllCategories(int page, int size);
+
+    Long getActiveCategoryCount();
 }

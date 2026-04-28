@@ -1,10 +1,10 @@
 package com.example.smartbuy.serviceImpls;
 
-import com.example.smartbuy.ApiResponse;
+import com.example.smartbuy.response.ApiResponse;
 import com.example.smartbuy.dtos.CategoryRequestDto;
 import com.example.smartbuy.dtos.CategoryResponseDto;
-import com.example.smartbuy.dtos.ProductResponseDto;
 import com.example.smartbuy.dtos.CategoryWithProductsResponseDto;
+import com.example.smartbuy.dtos.ProductResponseDto;
 import com.example.smartbuy.entity.CategoryEntity;
 import com.example.smartbuy.enums.Status;
 import com.example.smartbuy.exception.CategoryAlreadyExistsException;
@@ -33,7 +33,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public ApiResponse<CategoryResponseDto> createCategory(CategoryRequestDto dto) {
+    public CategoryResponseDto createCategory(CategoryRequestDto dto) {
 
         if (categoryRepository.existsByCategoryNameIgnoreCase(dto.getCategoryName())) {
             throw new CategoryAlreadyExistsException("Category already exists");
@@ -43,18 +43,24 @@ public class CategoryServiceImpl implements CategoryService {
         category.setUpdatedAt(LocalDateTime.now());
         category.setStatus(Status.ACTIVE);
 
-        CategoryEntity entity = CategoryMapper.toEntity(dto);
-        entity.setStatus(Status.ACTIVE);
-        entity.setCreatedAt(LocalDateTime.now());
-        entity.setUpdatedAt(LocalDateTime.now());
-
-        CategoryEntity saved = categoryRepository.save(entity);
-
-        return new ApiResponse<>("success", "Category created successfully",
-                CategoryMapper.toDto(saved));
+        CategoryEntity saved = categoryRepository.save(category);
+        return CategoryMapper.toDto(saved);
     }
 
+    @Override
+    public ApiResponse<List<CategoryResponseDto>> getAllCategories(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
 
+        Page<CategoryEntity> categoryPage = categoryRepository.findAll(pageable);
+
+        List<CategoryResponseDto> responseList = categoryPage.getContent()
+                .stream()
+                .map(CategoryMapper::toDto)
+                .toList();
+
+        return new ApiResponse<>("success", "Categories fetched successfully",responseList
+        );
+    }
     @Override
     public ApiResponse<CategoryResponseDto> getCategoryById(Long id) {
 
@@ -189,4 +195,9 @@ public class CategoryServiceImpl implements CategoryService {
                 response
         );
     }
+    @Override
+    public Long getActiveCategoryCount() {
+        return categoryRepository.countByStatus(Status.ACTIVE);
+    }
+
 }
