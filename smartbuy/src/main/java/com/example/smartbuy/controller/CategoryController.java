@@ -1,8 +1,7 @@
 package com.example.smartbuy.controller;
 
-import com.example.smartbuy.ApiResponse;
-import com.example.smartbuy.dtos.CategoryRequestDto;
-import com.example.smartbuy.dtos.CategoryResponseDto;
+import com.example.smartbuy.response.ApiResponse;
+import com.example.smartbuy.dtos.*;
 import com.example.smartbuy.service.CategoryService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +11,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/categories")
-
 public class CategoryController {
 
     private final CategoryService categoryService;
@@ -22,18 +20,43 @@ public class CategoryController {
     }
 
     @PostMapping
-    public ResponseEntity<CategoryResponseDto> createCategory(@RequestBody CategoryRequestDto dto) {
-        return new ResponseEntity<>(categoryService.createCategory(dto), HttpStatus.CREATED);
+    @ResponseStatus(HttpStatus.CREATED)
+    public CategoryResponseDto create(@RequestBody CategoryRequestDto dto) {
+        return categoryService.createCategory(dto);
     }
 
-    @GetMapping("/getCategories")
-    public ResponseEntity<ApiResponse<List<CategoryResponseDto>>> getAllCategories(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+    @GetMapping("/{id}")
+    public ApiResponse<CategoryResponseDto> getById(@PathVariable Long id) {
+        return categoryService.getCategoryById(id);
+    }
 
-        return ResponseEntity.ok(
-                categoryService.getAllCategories(page, size)
-        );
+    @PutMapping("/{id}")
+    public ApiResponse<CategoryResponseDto> update(@PathVariable Long id,
+                                                   @RequestBody CategoryRequestDto dto) {
+        return categoryService.updateCategory(id, dto);
+    }
+
+    @DeleteMapping("/{id}")
+    public ApiResponse<String> delete(@PathVariable Long id) {
+        return categoryService.deleteOrDeactivateCategory(id);
+    }
+
+
+    @GetMapping("/active")
+    public ApiResponse<?> getActive(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction
+    ) {
+        return categoryService.getActiveCategories(page, size, sortBy, direction);
+
+    }
+
+
+    @GetMapping("/active-products")
+    public ApiResponse<List<CategoryWithProductsResponseDto>> getActiveWithProducts() {
+        return categoryService.getActiveCategoriesWithProducts();
     }
 
     @GetMapping("/count")

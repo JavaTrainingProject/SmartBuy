@@ -73,7 +73,7 @@ public class SubCategoryController {
         SubCategoryResponseDto response = subCategoryService.updateSubCategory(id, dto);
 
         return ResponseEntity.ok(
-                new ApiResponse<>("SubCategory updated successfully", true, response)
+                new ApiResponse<>("SubCategory updated successfully", true, (List<SubCategoryResponseDto>) response)
         );
     }
 

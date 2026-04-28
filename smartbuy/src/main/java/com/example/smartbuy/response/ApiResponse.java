@@ -1,15 +1,19 @@
-package com.example.smartbuy;
+package com.example.smartbuy.response;
+
+import com.example.smartbuy.dtos.SubCategoryResponseDto;
+
+import java.util.List;
 
 public class ApiResponse<T> {
     private String status;
-    private boolean message;
+    private String message;
     private T data;
 
     public ApiResponse() {
 
     }
 
-    public ApiResponse(String status, boolean message, T data) {
+    public ApiResponse(String status, String message, T data) {
         this.status = status;
         this.message = message;
         this.data = data;
@@ -23,11 +27,11 @@ public class ApiResponse<T> {
         this.status = status;
     }
 
-    public boolean getMessage() {
+    public String getMessage() {
         return message;
     }
 
-    public void setMessage(boolean message) {
+    public void setMessage(String message) {
         this.message = message;
     }
 

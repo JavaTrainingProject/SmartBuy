@@ -113,7 +113,7 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 
         return new ApiResponse<>(
                 "SubCategory status updated successfully",
-                true,
+                String.valueOf(true),
                 "DONE"
         );
     }
