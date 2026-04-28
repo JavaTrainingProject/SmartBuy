@@ -1,7 +1,6 @@
 package com.example.smartbuy.entity;
 
 import com.example.smartbuy.enums.Role;
-import com.example.smartbuy.enums.Status;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -20,9 +19,6 @@ public class UserEntity {
     private String password;
     @Enumerated(EnumType.STRING)
     private Role role;
-    @Column(name = "is_active")
-    private Boolean active;
-
 
     private String refreshToken;
     private LocalDateTime createdAt;
@@ -93,14 +89,4 @@ public class UserEntity {
     }
 
 
-    public void setStatus(Status status) {
-    }
-
-    public Boolean getActive() {
-        return active;
-    }
-
-    public void setActive(Boolean active) {
-        this.active = active;
-    }
 }
