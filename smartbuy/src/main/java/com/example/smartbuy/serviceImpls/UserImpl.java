@@ -12,12 +12,13 @@ import com.example.smartbuy.service.EmailService;
 import com.example.smartbuy.service.UserService;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Service
 public class UserImpl implements UserService {
@@ -76,7 +77,7 @@ public class UserImpl implements UserService {
         }
 
         UserEntity user = UserMapper.toEntity(dto);
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setPassword(passwordEncoder.encode(dto.getUser_password()));
         user.setRole(Role.ADMIN);
 
         return UserMapper.toDto(userRepository.save(user));
@@ -173,7 +174,7 @@ public class UserImpl implements UserService {
             return "Invalid OTP";
         }
 
-        user.setVerified(true);
+        user.setVerified(false);
         user.setOtp(null);
         user.setOtpExpiry(null);
 
@@ -198,6 +199,61 @@ public class UserImpl implements UserService {
         emailService.sendOtpEmail(email, otp);
 
         return "OTP resent";
+    }
+
+    @Override
+    public Page<UserResponseDto> getAllUsers(Pageable pageable) {
+        return userRepository.findAll(pageable)
+                .map(UserMapper::toDto);
+    }
+    @Override
+    public UserResponseDto getUserById(Long id) {
+
+        UserEntity user = userRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("User not found"));
+
+        return UserMapper.toDto(user);
+    }
+
+
+    @Override
+    public UserResponseDto updateUser(Long id, UserUpdateRequestDto dto) {
+
+        UserEntity user = userRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("User not found"));
+
+        if (dto.getName() == null || dto.getName().isBlank()) {
+            throw new IllegalArgumentException("Name cannot be empty");
+        }
+
+        user.setUser_name(dto.getName());
+
+        if (dto.getEmail() != null &&
+                !dto.getEmail().equals(user.getEmail())) {
+
+            if (userRepository.existsByEmail(dto.getEmail())) {
+                throw new UserAlreadyExistsException("Email already exists");
+            }
+
+            user.setEmail(dto.getEmail());
+        }
+
+        user.setUpdatedAt(LocalDateTime.now());
+
+        return UserMapper.toDto(userRepository.save(user));
+    }
+
+
+    @Override
+    public void deleteUser(Long id) {
+
+        UserEntity user = userRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("User not found"));
+
+        userRepository.delete(user);
     }
 
 }
