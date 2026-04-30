@@ -4,10 +4,8 @@ import com.example.smartbuy.dtos.*;
 import com.example.smartbuy.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -40,5 +38,18 @@ public class AuthController {
     public MessageResponseDto logout(HttpServletRequest request){
         return userService.logout(request);
     }
+
+
+@PostMapping("/verify")
+public ResponseEntity<String> verifyOtp(
+        @RequestParam String email,
+        @RequestParam String otp) {
+
+    return ResponseEntity.ok(userService.verifyOtp(email, otp));
 }
 
+@PostMapping("/resend")
+public ResponseEntity<String> resendOtp(@RequestParam String email) {
+    return ResponseEntity.ok(userService.resendOtp(email));
+}
+}
