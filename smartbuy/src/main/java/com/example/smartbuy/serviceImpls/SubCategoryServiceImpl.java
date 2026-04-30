@@ -16,7 +16,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 @Service
@@ -71,7 +70,7 @@ public class SubCategoryServiceImpl implements SubCategoryService {
                 .map(SubCategoryMapper::toDto)
                 .toList();
 
-        return new ApiResponse<>("SUCCES",
+        return new ApiResponse<>("SUCCESS",
                 "Active subcategories fetched successfully",responseList
         );
     }
@@ -131,5 +130,30 @@ public class SubCategoryServiceImpl implements SubCategoryService {
         SubCategoryEntity updated = subCategoryRepository.save(subCategoryEntity);
         return SubCategoryMapper.toDto(updated);
     }
+
+    @Override
+    public ApiResponse<List<SubCategoryResponseDto>> getAllSubCategories() {
+        List<SubCategoryEntity> list = subCategoryRepository.findAll();
+
+        List<SubCategoryResponseDto> response =
+                list.stream()
+                        .map(SubCategoryMapper::toDto)
+                        .toList();
+
+        return new ApiResponse<>("SUCCESS", "Subcategories fetched successfully", response);
+    }
+
+    @Override
+    public ApiResponse<List<SubCategoryResponseDto>> getByStatus(Status status) {
+        List<SubCategoryEntity> list = subCategoryRepository.findByStatus(status);
+
+        List<SubCategoryResponseDto> response =
+                list.stream()
+                        .map(SubCategoryMapper::toDto)
+                        .toList();
+
+        return new ApiResponse<>("SUCCESS", "Subcategories fetched successfully", response);
+    }
+
 
 }

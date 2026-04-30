@@ -4,7 +4,6 @@ import com.example.smartbuy.response.ApiResponse;
 import com.example.smartbuy.dtos.CategoryRequestDto;
 import com.example.smartbuy.dtos.CategoryResponseDto;
 import com.example.smartbuy.dtos.CategoryWithProductsResponseDto;
-
 import java.util.List;
 
 public interface CategoryService {

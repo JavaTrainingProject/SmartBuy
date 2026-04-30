@@ -4,6 +4,7 @@ import com.example.smartbuy.response.ApiResponse;
 import com.example.smartbuy.dtos.ProductRequestDto;
 import com.example.smartbuy.dtos.ProductResponseDto;
 import com.example.smartbuy.service.ProductService;
+import com.example.smartbuy.service.SubCategoryService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
@@ -42,9 +43,8 @@ public class ProductController {
         ProductResponseDto response =
                 productService.createProduct(dto, images);
 
-        return ResponseEntity.ok(new ApiResponse<>("SUCCESS","Product created successfully",  response));
+        return ResponseEntity.ok(new ApiResponse<>("SUCCESS", "Product created successfully", response));
     }
-
 
     // GET ALL
     @GetMapping
@@ -54,9 +54,8 @@ public class ProductController {
 
         Page<ProductResponseDto> response = productService.getAllProducts(page, size);
 
-        return ResponseEntity.ok(new ApiResponse<>("SUCCESS","Products fetched successfully",  response));
+        return ResponseEntity.ok(new ApiResponse<>("SUCCESS", "Products fetched successfully", response));
     }
-
 
     //  GET BY ID
     @GetMapping("/{id}")
@@ -64,9 +63,8 @@ public class ProductController {
 
         ProductResponseDto response = productService.getProductById(id);
 
-        return ResponseEntity.ok(new ApiResponse<>("SUCCESS","Product fetched successfully",  response));
+        return ResponseEntity.ok(new ApiResponse<>("SUCCESS", "Product fetched successfully", response));
     }
-
 
     //  UPDATE
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -81,9 +79,8 @@ public class ProductController {
         ProductResponseDto response =
                 productService.updateProduct(id, dto, images);
 
-        return ResponseEntity.ok(new ApiResponse<>("SUCCESS","Product updated successfully",  response));
+        return ResponseEntity.ok(new ApiResponse<>("SUCCESS", "Product updated successfully", response));
     }
-
 
     // DELETE
     @DeleteMapping("/{id}")
@@ -91,9 +88,8 @@ public class ProductController {
 
         String message = productService.deleteProduct(id);
 
-        return ResponseEntity.ok(new ApiResponse<>("SUCCESS",message,  null));
+        return ResponseEntity.ok(new ApiResponse<>("SUCCESS", message, null));
     }
-
 
     //  STATUS UPDATE
     @PatchMapping("/{id}/status")
@@ -107,6 +103,8 @@ public class ProductController {
                 new ApiResponse<>("SUCCESS", "Status updated successfully", response)
         );
     }
+
+    //get all products
     @GetMapping("/status")
     public ResponseEntity<ApiResponse<List<ProductResponseDto>>> getProductsByStatus(
             @RequestParam String status) {
