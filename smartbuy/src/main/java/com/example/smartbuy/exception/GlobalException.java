@@ -66,5 +66,9 @@ public class GlobalException {
 
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+    @ExceptionHandler(UserAlreadyExistsException.class)
+    public ResponseEntity<?> handleUserExists(UserAlreadyExistsException ex) {
+        return ResponseEntity.status(409).body(ex.getMessage());
+    }
 }
 
