@@ -189,11 +189,7 @@ public class CategoryServiceImpl implements CategoryService {
             return new ApiResponse<>("success", "No active categories with products found", List.of());
         }
 
-        return new ApiResponse<>(
-                "success",
-                "Active categories with products fetched successfully",
-                response
-        );
+        return new ApiResponse<>("success", "Active categories with products fetched successfully", response);
     }
     @Override
     public Long getActiveCategoryCount() {

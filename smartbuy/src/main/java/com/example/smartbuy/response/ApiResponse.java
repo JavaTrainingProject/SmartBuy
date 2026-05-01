@@ -1,9 +1,5 @@
 package com.example.smartbuy.response;
 
-import com.example.smartbuy.dtos.SubCategoryResponseDto;
-
-import java.util.List;
-
 public class ApiResponse<T> {
     private String status;
     private String message;
@@ -19,9 +15,7 @@ public class ApiResponse<T> {
         this.data = data;
     }
 
-    public String getStatus() {
-        return status;
-    }
+    public String getStatus() {return status;}
 
     public void setStatus(String status) {
         this.status = status;

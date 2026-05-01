@@ -10,11 +10,11 @@ public class ProductMapper {
             ProductResponseDto dto = new ProductResponseDto();
 
             dto.setId(entity.getId());
-            dto.setName(entity.getProductName());   // IMPORTANT
-            dto.setDescription(entity.getProductDescription()); // IMPORTANT
+            dto.setName(entity.getProductName());
+            dto.setDescription(entity.getProductDescription());
             dto.setPrice(entity.getPrice());
             dto.setQuantity(entity.getQuantity());
-            dto.setImageFile(entity.getImageFile());
+            dto.setImageUrls(entity.getImageUrl());
             dto.setCreatedAt(entity.getCreatedAt());
 
             if (entity.getSubCategory() != null) {

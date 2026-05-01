@@ -53,7 +53,6 @@ public class CategoryController {
 
     }
 
-
     @GetMapping("/active-products")
     public ApiResponse<List<CategoryWithProductsResponseDto>> getActiveWithProducts() {
         return categoryService.getActiveCategoriesWithProducts();

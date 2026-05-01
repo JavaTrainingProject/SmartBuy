@@ -1,6 +1,9 @@
 package com.example.smartbuy.entity;
 
+import com.example.smartbuy.enums.ProductStatus;
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -11,90 +14,82 @@ public class ProductEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "product_id")
     private Long id;
+
     @Column(name = "product_name")
     private String productName;
+
     @Column(name = "product_description")
     private String productDescription;
-    private double price;
-    private int quantity;
-    private String imageFile;
+
+    private Double price;
+    private Integer quantity;
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    @Column(name = "image_url")
+    private String imageUrl;
+
+    @CreationTimestamp
     private LocalDateTime createdAt;
+
+    @UpdateTimestamp
     private LocalDateTime updatedAt;
+
     @ManyToOne
     @JoinColumn(name = "subcategory_id")
     private SubCategoryEntity subCategory;
 
-    public SubCategoryEntity getSubCategory() {
-        return subCategory;
-    }
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private CategoryEntity category;
 
-    public void setSubCategory(SubCategoryEntity subCategory) {
-        this.subCategory = subCategory;
-    }
+    @Enumerated(EnumType.STRING)
+    private ProductStatus status=ProductStatus.ACTIVE;
 
-    public String getImageFile() {
-        return imageFile;
-    }
+    public ProductStatus getStatus() {return status;}
 
-    public void setImageFile(String imageFile) {
-        this.imageFile = imageFile;
-    }
+    public void setStatus(ProductStatus status) {this.status = status;}
 
+    public SubCategoryEntity getSubCategory() {return subCategory;}
 
-    public Long getId() {
-        return id;
-    }
+    public void setSubCategory(SubCategoryEntity subCategory) {this.subCategory = subCategory;}
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public Long getId() {return id;}
 
-    public String getProductName() {
-        return productName;
-    }
+    public void setId(Long id) {this.id = id;}
 
-    public void setProductName(String productName) {
-        this.productName = productName;
-    }
+    public String getProductName() {return productName;}
 
-    public String getProductDescription() {
-        return productDescription;
-    }
+    public void setProductName(String productName) {this.productName = productName;}
 
-    public void setProductDescription(String productDescription) {
-        this.productDescription = productDescription;
-    }
+    public String getProductDescription() {return productDescription;}
 
-    public double getPrice() {
-        return price;
-    }
+    public void setProductDescription(String productDescription) {this.productDescription = productDescription;}
 
-    public void setPrice(double price) {
-        this.price = price;
-    }
+    public Double getPrice() {return price;}
 
-    public int getQuantity() {
-        return quantity;
-    }
+    public void setPrice(Double price) {this.price = price;}
 
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
+    public Integer getQuantity() {return quantity;}
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
+    public void setQuantity(Integer quantity) {this.quantity = quantity;}
 
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
+    public LocalDateTime getCreatedAt() {return createdAt;}
 
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
+    public void setCreatedAt(LocalDateTime createdAt) {this.createdAt = createdAt;}
 
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-    }
+    public LocalDateTime getUpdatedAt() {return updatedAt;}
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {this.updatedAt = updatedAt;}
+
+    public CategoryEntity getCategory() {return category;}
+
+    public void setCategory(CategoryEntity category) {this.category = category;}
 
 }
