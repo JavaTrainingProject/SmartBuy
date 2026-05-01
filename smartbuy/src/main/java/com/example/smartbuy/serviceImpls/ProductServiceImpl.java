@@ -14,9 +14,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+
+import org.springframework.beans.factory.annotation.Value;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,10 +26,16 @@ import java.util.List;
 @Service
 public class ProductServiceImpl implements ProductService {
 
-   private final ProductRepository productRepository;
+    private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
     private final SubCategoryRepository subCategoryRepository;
     private final ProductImageRepository imageRepository;
+
+    @Value("${file.upload-dir}")
+    private String uploadDir;
+
+    @Value("${app.base-url}")
+    private String baseUrl;
 
     public ProductServiceImpl(ProductRepository productRepository,
                               CategoryRepository categoryRepository,
@@ -40,7 +48,6 @@ public class ProductServiceImpl implements ProductService {
         this.imageRepository = imageRepository;
     }
 
-    // CREATE
     @Override
     public ProductResponseDto createProduct(ProductRequestDto dto, MultipartFile image) {
 
@@ -65,14 +72,12 @@ public class ProductServiceImpl implements ProductService {
         return mapToResponse(productRepository.save(product));
     }
 
-    // GET ALL
     @Override
     public Page<ProductResponseDto> getAllProducts(int page, int size) {
         return productRepository.findAll(PageRequest.of(page, size))
                 .map(this::mapToResponse);
     }
 
-    // GET PRODUCT BY ID
     @Override
     public ProductResponseDto getProductById(Long id) {
 
@@ -86,9 +91,9 @@ public class ProductServiceImpl implements ProductService {
         return mapToResponse(product);
     }
 
-    //  UPDATE
+
     @Override
-    public ProductResponseDto updateProduct(Long id, ProductRequestDto dto,MultipartFile images) {
+    public ProductResponseDto updateProduct(Long id, ProductRequestDto dto, MultipartFile images) {
 
         ProductEntity product = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
@@ -109,7 +114,6 @@ public class ProductServiceImpl implements ProductService {
         return mapToResponse(updated);
     }
 
-    //  DELETE
     @Override
     public String deleteProduct(Long id) {
         if (!productRepository.existsById(id)) {
@@ -119,7 +123,6 @@ public class ProductServiceImpl implements ProductService {
         return "Product deleted successfully";
     }
 
-    //  STATUS
     @Override
     public String updateProductStatus(Long id, String status) {
 
@@ -140,68 +143,76 @@ public class ProductServiceImpl implements ProductService {
         return "Status updated successfully";
     }
 
-//upload image
+
     private String uploadImage(MultipartFile file) {
 
         if (file == null || file.isEmpty()) return null;
 
-        String uploadDir = System.getProperty("user.dir") + "/uploads/";
-
         try {
-            Files.createDirectories(Paths.get(uploadDir));
+            File dir = new File(uploadDir);
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
+
+
+            String originalName = file.getOriginalFilename();
+            String cleanName = (originalName != null)
+                    ? originalName.replaceAll("\\s+", "_")
+                    : "image";
+
+            String fileName = System.currentTimeMillis() + "_" + cleanName;
+
+            File destination = new File(dir, fileName);
+            file.transferTo(destination);
+
+            return "/uploads/" + fileName;
+
         } catch (Exception e) {
-            throw new RuntimeException("Folder creation failed");
+            throw new IllegalStateException("File upload failed: " + file.getOriginalFilename());
         }
-
-        String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
-
-        try {
-            file.transferTo(new File(uploadDir + fileName));
-        } catch (Exception e) {
-            throw new RuntimeException("File upload failed");
-        }
-
-        return "/uploads/" + fileName;
     }
 
-    // IMAGE SAVE
+
     private List<ProductImage> saveImages(List<MultipartFile> images, ProductEntity product) {
 
         List<ProductImage> list = new ArrayList<>();
 
         if (images == null) return list;
 
-        String uploadDir = System.getProperty("user.dir") + "/uploads/";
-
-        try {
-            Files.createDirectories(Paths.get(uploadDir));
-        } catch (Exception e) {
-            throw new RuntimeException("Folder creation failed");
-        }
-
         for (MultipartFile file : images) {
 
             if (file.isEmpty()) continue;
 
-            String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
-
             try {
-                file.transferTo(new File(uploadDir + fileName));
+                File dir = new File(uploadDir);
+                if (!dir.exists()) {
+                    dir.mkdirs();
+                }
+
+                String originalName = file.getOriginalFilename();
+                String cleanName = (originalName != null)
+                        ? originalName.replaceAll("\\s+", "_")
+                        : "image";
+
+                String fileName = System.currentTimeMillis() + "_" + cleanName;
+
+                File destination = new File(dir, fileName);
+                file.transferTo(destination);
+
+                ProductImage img = new ProductImage();
+                img.setImageUrl(baseUrl + "/uploads/" + fileName);
+                img.setProduct(product);
+
+                list.add(img);
+
             } catch (Exception e) {
-                throw new RuntimeException("File upload failed");
+                throw new IllegalStateException("File upload failed: " + file.getOriginalFilename());
             }
-
-            ProductImage img = new ProductImage();
-            img.setImageUrl("/uploads/" + fileName);
-            img.setProduct(product);
-
-            list.add(img);
         }
 
         return imageRepository.saveAll(list);
     }
 
-    //  MAP
     private ProductResponseDto mapToResponse(ProductEntity product) {
 
         ProductResponseDto dto = new ProductResponseDto();
@@ -228,20 +239,20 @@ public class ProductServiceImpl implements ProductService {
         return dto;
     }
 
-@Override
-public List<ProductResponseDto> getProductsByStatus(String status) {
+    @Override
+    public List<ProductResponseDto> getProductsByStatus(String status) {
 
-    ProductStatus productStatus;
+        ProductStatus productStatus;
 
-    try {
-        productStatus = ProductStatus.valueOf(status.toUpperCase());
-    } catch (Exception e) {
-        throw new IllegalArgumentException("Invalid status. Use ACTIVE or INACTIVE");
+        try {
+            productStatus = ProductStatus.valueOf(status.toUpperCase());
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Invalid status. Use ACTIVE or INACTIVE");
+        }
+
+        return productRepository.findByStatus(productStatus)
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
     }
-
-    return productRepository.findByStatus(productStatus)
-            .stream()
-            .map(this::mapToResponse)
-            .toList();
-}
 }

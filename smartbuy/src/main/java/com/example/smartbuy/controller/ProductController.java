@@ -9,12 +9,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-
 
 @Validated
 @RestController
@@ -25,13 +25,11 @@ public class ProductController {
     private final ObjectMapper objectMapper;
 
     //  Constructor Injection
-
     public ProductController(ProductService productService, ObjectMapper objectMapper) {
         this.productService = productService;
         this.objectMapper = objectMapper;
     }
 
-    //  CREATE PRODUCT
     @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponse<ProductResponseDto>> createProduct(
             @RequestParam("product") String productJson,
@@ -46,7 +44,7 @@ public class ProductController {
         return ResponseEntity.ok(new ApiResponse<>("SUCCESS", "Product created successfully", response));
     }
 
-    // GET ALL
+
     @GetMapping
     public ResponseEntity<ApiResponse<Page<ProductResponseDto>>> getAllProducts(
             @RequestParam(defaultValue = "0") int page,
@@ -57,7 +55,7 @@ public class ProductController {
         return ResponseEntity.ok(new ApiResponse<>("SUCCESS", "Products fetched successfully", response));
     }
 
-    //  GET BY ID
+
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<ProductResponseDto>> getProductById(@PathVariable Long id) {
 
@@ -66,7 +64,7 @@ public class ProductController {
         return ResponseEntity.ok(new ApiResponse<>("SUCCESS", "Product fetched successfully", response));
     }
 
-    //  UPDATE
+
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponse<ProductResponseDto>> updateProduct(
             @PathVariable Long id,
@@ -82,7 +80,7 @@ public class ProductController {
         return ResponseEntity.ok(new ApiResponse<>("SUCCESS", "Product updated successfully", response));
     }
 
-    // DELETE
+
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<String>> deleteProduct(@PathVariable Long id) {
 
@@ -91,7 +89,7 @@ public class ProductController {
         return ResponseEntity.ok(new ApiResponse<>("SUCCESS", message, null));
     }
 
-    //  STATUS UPDATE
+
     @PatchMapping("/{id}/status")
     public ResponseEntity<ApiResponse<String>> updateStatus(
             @PathVariable Long id,
@@ -104,7 +102,7 @@ public class ProductController {
         );
     }
 
-    //get all products
+//sub categories
     @GetMapping("/status")
     public ResponseEntity<ApiResponse<List<ProductResponseDto>>> getProductsByStatus(
             @RequestParam String status) {

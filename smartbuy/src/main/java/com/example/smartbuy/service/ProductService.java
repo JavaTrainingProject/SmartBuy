@@ -19,6 +19,7 @@ public interface ProductService {
     String deleteProduct(Long productId);
 
     String updateProductStatus(Long id, String status);
+
     List<ProductResponseDto> getProductsByStatus(String status);
 
 }

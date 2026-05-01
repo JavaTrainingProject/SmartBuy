@@ -19,6 +19,7 @@ public interface CategoryService {
     ApiResponse<?> getActiveCategories(int page, int size, String sortBy, String direction);
 
     ApiResponse<List<CategoryWithProductsResponseDto>> getActiveCategoriesWithProducts();
+
     ApiResponse<List<CategoryResponseDto>> getAllCategories(int page, int size);
 
     Long getActiveCategoryCount();

@@ -24,7 +24,6 @@ public class ProductEntity {
     private Double price;
     private Integer quantity;
 
-
     public String getImageUrl() {
         return imageUrl;
     }
