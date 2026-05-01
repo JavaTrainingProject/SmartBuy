@@ -6,11 +6,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
+
 public interface SubCategoryRepository extends JpaRepository<SubCategoryEntity, Long> {
 
     boolean existsBySubCategoryNameIgnoreCase(String subCategoryName);
 
     Page<SubCategoryEntity> findByStatus(Status status, Pageable pageable);
+
+    List<SubCategoryEntity> findByStatus(Status status); //I added this
 
     Page<SubCategoryEntity> findByCategoryIdAndStatus(
             Long categoryId,

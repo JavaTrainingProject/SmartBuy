@@ -20,7 +20,6 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 @Component
 public class JWTFilter extends OncePerRequestFilter {
 
-
     private final JWTService jwtService;
 
     public JWTFilter(JWTService jwtService) {

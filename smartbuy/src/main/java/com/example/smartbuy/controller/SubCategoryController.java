@@ -1,16 +1,15 @@
 package com.example.smartbuy.controller;
 
-import com.example.smartbuy.ApiResponse;
 import com.example.smartbuy.dtos.SubCategoryRequestDto;
 import com.example.smartbuy.dtos.SubCategoryResponseDto;
 import com.example.smartbuy.dtos.UpdateStatusRequestDto;
+import com.example.smartbuy.enums.Status;
+import com.example.smartbuy.response.ApiResponse;
 import com.example.smartbuy.service.SubCategoryService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
-
 
 @RestController
 @RequestMapping("/api/subcategory")
@@ -70,11 +69,33 @@ public class SubCategoryController {
             @PathVariable Long id,
             @Valid @RequestBody SubCategoryRequestDto dto) {
 
-        SubCategoryResponseDto response = subCategoryService.updateSubCategory(id, dto);
+        SubCategoryResponseDto response =
+                subCategoryService.updateSubCategory(id, dto);
 
         return ResponseEntity.ok(
-                new ApiResponse<>("SubCategory updated successfully", true, (List<SubCategoryResponseDto>) response)
+                new ApiResponse<>("SUCCESS", "SubCategory updated successfully", response)
         );
+    }
+
+    //  Get all subcategories
+    @GetMapping
+    public ResponseEntity<ApiResponse<List<SubCategoryResponseDto>>> getAllSubCategories() {
+
+        ApiResponse<List<SubCategoryResponseDto>> response =
+                subCategoryService.getAllSubCategories();
+
+        return ResponseEntity.ok(response);
+    }
+
+    // Get subcategories by status (ACTIVE / INACTIVE)
+    @GetMapping("/status")
+    public ResponseEntity<ApiResponse<List<SubCategoryResponseDto>>> getByStatus(
+            @RequestParam Status status) {
+
+        ApiResponse<List<SubCategoryResponseDto>> response =
+                subCategoryService.getByStatus(status);
+
+        return ResponseEntity.ok(response);
     }
 
     }

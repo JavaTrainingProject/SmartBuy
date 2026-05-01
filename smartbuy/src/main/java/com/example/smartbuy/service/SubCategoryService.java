@@ -1,9 +1,9 @@
 package com.example.smartbuy.service;
 
-import com.example.smartbuy.ApiResponse;
 import com.example.smartbuy.dtos.SubCategoryRequestDto;
 import com.example.smartbuy.dtos.SubCategoryResponseDto;
 import com.example.smartbuy.enums.Status;
+import com.example.smartbuy.response.ApiResponse;
 
 import java.util.List;
 
@@ -21,4 +21,8 @@ public interface SubCategoryService {
     ApiResponse<String> updateSubCategoryStatus(Long id, Status status);
 
     SubCategoryResponseDto updateSubCategory(Long id, SubCategoryRequestDto dto);
+
+    ApiResponse<List<SubCategoryResponseDto>> getAllSubCategories();
+
+    ApiResponse<List<SubCategoryResponseDto>> getByStatus(Status status);
     }

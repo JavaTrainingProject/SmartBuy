@@ -16,5 +16,6 @@ public interface CategoryRepository extends JpaRepository<CategoryEntity, Long> 
     List<CategoryEntity> findByStatus(Status status);
 
     Page<CategoryEntity> findByStatus(Status status, Pageable pageable);
+
     Long countByStatus(Status status);
 }

@@ -22,9 +22,7 @@ public class SubCategoryResponseDto {
         return subCategoryDescription;
     }
 
-    public void setSubCategoryDescription(String subCategoryDescription) {
-        this.subCategoryDescription = subCategoryDescription;
-    }
+    public void setSubCategoryDescription(String subCategoryDescription) {this.subCategoryDescription = subCategoryDescription;}
 
     public Long getCategoryId() {
         return categoryId;
