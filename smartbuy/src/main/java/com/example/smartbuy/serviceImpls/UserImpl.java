@@ -19,6 +19,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class UserImpl implements UserService {
@@ -28,6 +30,9 @@ public class UserImpl implements UserService {
     private final JWTService jwtService;
     private final AuthenticationManager authenticationManager;
     private final EmailService emailService;
+    private Map<String, UserRequestDto> tempUsers = new HashMap<>();
+    private Map<String, String> otpStorage = new HashMap<>();
+    private Map<String, LocalDateTime> otpExpiryMap = new HashMap<>();
 
 
     public UserImpl(UserRepository userRepository,
@@ -45,28 +50,18 @@ public class UserImpl implements UserService {
     @Override
     public UserResponseDto registerUser(UserRequestDto dto) {
 
-        if (userRepository.findByEmail(dto.getEmail()).isPresent()) {
+        if (userRepository.findByEmail(dto.getEmail()).isPresent() || tempUsers.containsKey(dto.getEmail())) {
             throw new UserAlreadyExistsException("User already exists");
         }
-        String otp = String.valueOf((int)(Math.random() * 900000) + 100000);// for otp
+        String otp = String.valueOf((int)(Math.random() * 900000) + 100000);
 
+        tempUsers.put(dto.getEmail(),dto);
+        otpStorage.put(dto.getEmail(),otp);
 
-        UserEntity user = UserMapper.toEntity(dto);
-        user.setUser_name(dto.getUser_name());
-        user.setEmail(dto.getEmail());
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setRole(Role.USER);
+        emailService.sendOtpEmail(dto.getEmail(), otp);
+        otpExpiryMap.put(dto.getEmail(), LocalDateTime.now().plusMinutes(5));
 
-        user.setOtp(otp);
-        user.setOtpExpiry(LocalDateTime.now().plusMinutes(5));
-        user.setVerified(false);
-
-        //userRepository.save(user);
-
-        emailService.sendOtpEmail(user.getEmail(), otp);
-
-
-        return UserMapper.toDto( userRepository.save(user));
+        return new UserResponseDto();
     }
 
     @Override
@@ -102,9 +97,7 @@ public class UserImpl implements UserService {
                 .orElseThrow(() -> new InvalidCredentialsException("Invalid credentials"));
 
 
-        if (!user.isVerified()) {
-            throw new RuntimeException("Please verify your email first");
-        }
+
 
         String token = jwtService.generateToken(user.getEmail(), user.getRole());
 
@@ -161,24 +154,36 @@ public class UserImpl implements UserService {
     @Override
     public String verifyOtp(String email, String otp) {
 
-        System.out.println("VERIFY API CALLED");
+      String storedOtp = otpStorage.get(email);
 
-        UserEntity user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+      if(storedOtp == null){
+          return "No OTP found";
+      }
 
-        if (user.getOtpExpiry().isBefore(LocalDateTime.now())) {
+      if(!storedOtp.equals(otp)){
+          return "Invalid OTP";
+      }
+
+      UserRequestDto dto=tempUsers.get(email);
+
+      if(dto ==null){
+          return  "User data not found";
+      }
+
+        LocalDateTime expiry = otpExpiryMap.get(email);
+
+        if (expiry == null || expiry.isBefore(LocalDateTime.now())) {
             return "OTP expired";
         }
 
-        if (!user.getOtp().equals(otp)) {
-            return "Invalid OTP";
-        }
+      UserEntity user = UserMapper.toEntity(dto);
+      user.setPassword(passwordEncoder.encode(dto.getUser_password()));
+      user.setRole(Role.USER);
+      userRepository.save(user);
 
-        user.setVerified(false);
-        user.setOtp(null);
-        user.setOtpExpiry(null);
-
-        userRepository.save(user);
+      tempUsers.remove(email);
+      otpStorage.remove(email);
+      otpExpiryMap.remove(email);
 
         return "Verified successfully";
     }
@@ -186,15 +191,12 @@ public class UserImpl implements UserService {
     @Override
     public String resendOtp(String email) {
 
-        UserEntity user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        if(!tempUsers.containsKey(email))
+            throw new RuntimeException("User not found");
 
         String otp = String.valueOf((int)(Math.random() * 900000) + 100000);
 
-        user.setOtp(otp);
-        user.setOtpExpiry(LocalDateTime.now().plusMinutes(5));
-
-        userRepository.save(user);
+        otpStorage.put(email,otp);
 
         emailService.sendOtpEmail(email, otp);
 
