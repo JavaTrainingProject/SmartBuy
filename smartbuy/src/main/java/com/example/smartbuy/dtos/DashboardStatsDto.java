@@ -37,5 +37,6 @@ public class DashboardStatsDto {
     public void setActiveProductsCount(Long activeProductsCount) {
         this.activeProductsCount = activeProductsCount;
 
+
     }
 }
