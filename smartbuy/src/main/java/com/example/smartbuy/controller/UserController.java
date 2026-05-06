@@ -36,7 +36,7 @@ import org.springframework.web.bind.annotation.*;
 
 
         @PutMapping("/{id}")
-        @PreAuthorize("hasRole('ADMIN')")
+        @PreAuthorize("hasRole('USER')")
         public UserResponseDto updateUser(
                 @PathVariable Long id,
                 @RequestBody UserUpdateRequestDto dto) {
