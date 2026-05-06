@@ -10,6 +10,7 @@ public class UserResponseDto {
     private Role role;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private String otp;
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
@@ -57,6 +58,14 @@ public class UserResponseDto {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public void setOtp(String otp) {
+        this.otp=otp;
+    }
+
+    public String getOtp() {
+        return otp;
     }
 }
 
