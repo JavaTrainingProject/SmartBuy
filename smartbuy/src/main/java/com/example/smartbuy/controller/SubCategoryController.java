@@ -8,6 +8,7 @@ import com.example.smartbuy.response.ApiResponse;
 import com.example.smartbuy.service.SubCategoryService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -22,18 +23,21 @@ public class SubCategoryController {
         }
 
         @PostMapping
+        @PreAuthorize("hasRole('ADMIN')")
         public ResponseEntity<SubCategoryResponseDto> create(
                 @RequestBody SubCategoryRequestDto dto) {
 
             return ResponseEntity.ok(subCategoryService.createSubCategory(dto));
         }
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     public ResponseEntity<SubCategoryResponseDto> getSubCategoryById(@PathVariable Long id) {
         SubCategoryResponseDto dto = subCategoryService.getSubCategoryById(id);
         return ResponseEntity.ok(dto);
     }
 
     @GetMapping("/active")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     public ResponseEntity<ApiResponse<List<SubCategoryResponseDto>>> getActiveSubCategories(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
@@ -42,6 +46,7 @@ public class SubCategoryController {
     }
 
     @GetMapping("/categories/{categoryId}/subcategories")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     public ResponseEntity<ApiResponse<List<SubCategoryResponseDto>>> getActiveSubCategories(
             @PathVariable Long categoryId,
             @RequestParam(defaultValue = "0") int page,
@@ -54,6 +59,7 @@ public class SubCategoryController {
     }
 
     @PatchMapping("/{id}/status")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<String>> updateStatus(
             @PathVariable Long id,
             @Valid @RequestBody UpdateStatusRequestDto requestDto) {
@@ -65,6 +71,7 @@ public class SubCategoryController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<SubCategoryResponseDto>> updateSubCategory(
             @PathVariable Long id,
             @Valid @RequestBody SubCategoryRequestDto dto) {
@@ -77,8 +84,9 @@ public class SubCategoryController {
         );
     }
 
-    //  Get all subcategories
+
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     public ResponseEntity<ApiResponse<List<SubCategoryResponseDto>>> getAllSubCategories() {
 
         ApiResponse<List<SubCategoryResponseDto>> response =
@@ -87,8 +95,9 @@ public class SubCategoryController {
         return ResponseEntity.ok(response);
     }
 
-    // Get subcategories by status (ACTIVE / INACTIVE)
+
     @GetMapping("/status")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     public ResponseEntity<ApiResponse<List<SubCategoryResponseDto>>> getByStatus(
             @RequestParam Status status) {
 
