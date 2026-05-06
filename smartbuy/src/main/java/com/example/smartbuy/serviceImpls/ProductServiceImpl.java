@@ -14,11 +14,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.File;
-
 import org.springframework.beans.factory.annotation.Value;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -63,6 +60,8 @@ public class ProductServiceImpl implements ProductService {
         product.setProductDescription(dto.getProduct_description());
         product.setPrice(dto.getProduct_price());
         product.setQuantity(dto.getQuantity());
+        product.setStock(dto.getStock());
+
         product.setCategory(category);
         product.setSubCategory(subCategory);
         product.setStatus((ProductStatus.ACTIVE));
@@ -102,6 +101,7 @@ public class ProductServiceImpl implements ProductService {
         product.setProductDescription(dto.getProduct_description());
         product.setPrice(dto.getProduct_price());
         product.setQuantity(dto.getQuantity());
+        product.setStock(dto.getStock());
         product.setUpdatedAt(LocalDateTime.now());
         if (images != null && !images.isEmpty()) {
             String imageUrl = uploadImage(images);
@@ -222,6 +222,7 @@ public class ProductServiceImpl implements ProductService {
         dto.setDescription(product.getProductDescription());
         dto.setPrice(product.getPrice());
         dto.setQuantity(product.getQuantity());
+        dto.setStock(product.getStock());
         dto.setCreatedAt(product.getCreatedAt());
 
         if (product.getCategory() != null) {

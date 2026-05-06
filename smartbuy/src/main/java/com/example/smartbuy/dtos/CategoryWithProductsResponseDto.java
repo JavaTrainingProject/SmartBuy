@@ -6,7 +6,7 @@ public class CategoryWithProductsResponseDto {
 
     private Long id;
     private String categoryName;
-    private List<ProductResponseDto> products; // use existing DTO
+    private List<ProductResponseDto> products;
 
     public Long getId() {
         return id;
