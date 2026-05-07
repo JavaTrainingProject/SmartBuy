@@ -16,7 +16,7 @@ public class CategoryMapper {
 
         CategoryEntity entity = new CategoryEntity();
         entity.setCategoryName(dto.getCategoryName());
-        entity.setCategoryDescription(dto.getCategoryDescription());
+        entity.setStatus(dto.getStatus());
         entity.setStatus(dto.getStatus() != null ? dto.getStatus() : Status.ACTIVE);
         entity.setCreatedAt(LocalDateTime.now());
         entity.setUpdatedAt(LocalDateTime.now());
@@ -30,7 +30,7 @@ public class CategoryMapper {
         CategoryResponseDto dto = new CategoryResponseDto();
         dto.setId(entity.getId());
         dto.setCategoryName(entity.getCategoryName());
-        dto.setCategoryDescription(entity.getCategoryDescription());
+        dto.setStatus(entity.getStatus());
         dto.setCreatedAt(entity.getCreatedAt());
         dto.setUpdatedAt(entity.getUpdatedAt());
 
@@ -39,7 +39,7 @@ public class CategoryMapper {
 
     public static void updateEntity(CategoryEntity entity, CategoryRequestDto dto) {
         entity.setCategoryName(dto.getCategoryName());
-        entity.setCategoryDescription(dto.getCategoryDescription());
+        entity.setStatus(dto.getStatus());
 
         if (dto.getStatus() != null) {
             entity.setStatus(dto.getStatus());

@@ -38,6 +38,8 @@ public class CategoryServiceImpl implements CategoryService {
         if (categoryRepository.existsByCategoryNameIgnoreCase(dto.getCategoryName())) {
             throw new CategoryAlreadyExistsException("Category already exists");
         }
+
+
         CategoryEntity category = categoryMapper.toEntity(dto);
         category.setCreatedAt(LocalDateTime.now());
         category.setUpdatedAt(LocalDateTime.now());
@@ -87,7 +89,7 @@ public class CategoryServiceImpl implements CategoryService {
         }
 
         entity.setCategoryName(dto.getCategoryName());
-        entity.setCategoryDescription(dto.getCategoryDescription());
+        entity.setStatus(dto.getStatus());
         entity.setUpdatedAt(LocalDateTime.now());
 
         if (dto.getStatus() != null) {
@@ -195,5 +197,33 @@ public class CategoryServiceImpl implements CategoryService {
     public Long getActiveCategoryCount() {
         return categoryRepository.countByStatus(Status.ACTIVE);
     }
+
+    @Override
+    public ApiResponse<Page<CategoryResponseDto>> getAllCategories(
+            int page,
+            int size,
+            String sortBy,
+            String direction
+    ) {
+
+        Sort sort = direction.equalsIgnoreCase("asc")
+                ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        Page<CategoryEntity> categoryPage =
+                categoryRepository.findAll(pageable);
+
+        Page<CategoryResponseDto> response =
+                categoryPage.map(CategoryMapper::toDto);
+
+        return new ApiResponse<>(
+                "success",
+                "Categories fetched successfully",
+                response
+        );
+    }
+
 
 }

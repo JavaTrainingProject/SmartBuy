@@ -8,8 +8,6 @@ public class CategoryRequestDto {
     @NotBlank(message = "Category name is required")
     @Size(min = 2, max = 100, message = "Name must be between 2 and 100 characters")
     private String categoryName;
-    @Size(max = 255, message = "Description must be less than 255 characters")
-    private String categoryDescription;
     private Status status;
 
     public Status getStatus() {
@@ -28,12 +26,6 @@ public class CategoryRequestDto {
         this.categoryName = categoryName;
     }
 
-    public String getCategoryDescription() {
-        return categoryDescription;
-    }
 
-    public void setCategoryDescription(String categoryDescription) {
-        this.categoryDescription = categoryDescription;
-    }
 }
 

@@ -16,8 +16,6 @@ public class CategoryEntity {
     private Long id;
     @Column(name = "category_name")
     private String categoryName;
-    @Column(name="category_description")
-    private String categoryDescription;
     @Enumerated(EnumType.STRING)
     @Column(name = "category_status")
     private Status status;
@@ -57,14 +55,6 @@ public class CategoryEntity {
 
     public void setCategoryName(String categoryName) {
         this.categoryName = categoryName;
-    }
-
-    public String getCategoryDescription() {
-        return categoryDescription;
-    }
-
-    public void setCategoryDescription(String categoryDescription) {
-        this.categoryDescription = categoryDescription;
     }
 
     public Long getId() {

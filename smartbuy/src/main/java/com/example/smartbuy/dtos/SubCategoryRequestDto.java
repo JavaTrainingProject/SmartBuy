@@ -13,8 +13,17 @@ public class SubCategoryRequestDto {
     @NotBlank(message = "Description name is required")
     @Size(max = 255)
     private String subCategoryDescription;
+    private Status status;
     @NotNull(message = "Category ID is required")
     private Long categoryId;
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
 
     public Long getCategoryId() {
         return categoryId;
