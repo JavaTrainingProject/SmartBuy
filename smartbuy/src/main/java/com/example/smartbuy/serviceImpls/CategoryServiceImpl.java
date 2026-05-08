@@ -79,27 +79,31 @@ public class CategoryServiceImpl implements CategoryService {
         CategoryEntity entity = categoryRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Category not found"));
 
-        if (dto.getCategoryName() == null || dto.getCategoryName().trim().isEmpty()) {
-            throw new RuntimeException("Category name cannot be empty");
-        }
+        if (dto.getCategoryName() != null &&
+                !dto.getCategoryName().trim().isEmpty()) {
 
-        if (categoryRepository.existsByCategoryNameIgnoreCase(dto.getCategoryName())
-                && !entity.getCategoryName().equalsIgnoreCase(dto.getCategoryName())) {
-            throw new RuntimeException("Category name already exists");
-        }
+            if (categoryRepository.existsByCategoryNameIgnoreCase(dto.getCategoryName())
+                    && !entity.getCategoryName().equalsIgnoreCase(dto.getCategoryName())) {
 
-        entity.setCategoryName(dto.getCategoryName());
-        entity.setStatus(dto.getStatus());
-        entity.setUpdatedAt(LocalDateTime.now());
+                throw new RuntimeException("Category name already exists");
+            }
+
+            entity.setCategoryName(dto.getCategoryName());
+        }
 
         if (dto.getStatus() != null) {
             entity.setStatus(dto.getStatus());
         }
 
+        entity.setUpdatedAt(LocalDateTime.now());
+
         CategoryEntity saved = categoryRepository.save(entity);
 
-        return new ApiResponse<>("success", "Category updated successfully",
-                CategoryMapper.toDto(saved));
+        return new ApiResponse<>(
+                "success",
+                "Category updated successfully",
+                CategoryMapper.toDto(saved)
+        );
     }
 
     @Override
