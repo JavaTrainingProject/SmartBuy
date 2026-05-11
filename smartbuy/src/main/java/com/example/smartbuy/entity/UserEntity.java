@@ -21,11 +21,6 @@ public class UserEntity {
         @Enumerated(EnumType.STRING)
         private Role role;
 
-        private String otp;
-
-        private LocalDateTime otpExpiry;
-
-        private Boolean isVerified;
 
         private String refreshToken;
         private LocalDateTime createdAt;
@@ -95,29 +90,7 @@ public class UserEntity {
             this.refreshToken = refreshToken;
         }
 
-        public String getOtp() {
-            return otp;
-        }
 
-        public void setOtp(String otp) {
-            this.otp = otp;
-        }
-
-        public LocalDateTime getOtpExpiry() {
-            return otpExpiry;
-        }
-
-        public void setOtpExpiry(LocalDateTime otpExpiry) {
-            this.otpExpiry = otpExpiry;
-        }
-
-        public boolean isVerified() {
-            return isVerified;
-        }
-
-        public void setVerified(boolean verified) {
-            isVerified = verified;
-        }
 
     }
 

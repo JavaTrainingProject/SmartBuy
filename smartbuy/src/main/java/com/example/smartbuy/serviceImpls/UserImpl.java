@@ -57,9 +57,9 @@ public class UserImpl implements UserService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRole(Role.USER);
 
-        user.setOtp(otp);
-        user.setOtpExpiry(LocalDateTime.now().plusMinutes(5));
-        user.setVerified(false);
+//        user.setOtp(otp);
+//        user.setOtpExpiry(LocalDateTime.now().plusMinutes(5));
+//        user.setVerified(false);
 
         //userRepository.save(user);
 
@@ -102,9 +102,9 @@ public class UserImpl implements UserService {
                 .orElseThrow(() -> new InvalidCredentialsException("Invalid credentials"));
 
 
-        if (!user.isVerified()) {
-            throw new RuntimeException("Please verify your email first");
-        }
+//        if (!user.isVerified()) {
+//            throw new RuntimeException("Please verify your email first");
+//        }
 
         String token = jwtService.generateToken(user.getEmail(), user.getRole());
 
@@ -166,17 +166,18 @@ public class UserImpl implements UserService {
         UserEntity user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        if (user.getOtpExpiry().isBefore(LocalDateTime.now())) {
-            return "OTP expired";
-        }
+//        if (user.getOtpExpiry().isBefore(LocalDateTime.now())) {
+//            return "OTP expired";
+//        }
+//
+//        if (!user.getOtp().equals(otp)) {
+//            return "Invalid OTP";
+//        }
 
-        if (!user.getOtp().equals(otp)) {
-            return "Invalid OTP";
-        }
-
-        user.setVerified(false);
-        user.setOtp(null);
-        user.setOtpExpiry(null);
+        //user.setVerified(false);
+//        user.setVerified((true));
+//        user.setOtp(null);
+//        user.setOtpExpiry(null);
 
         userRepository.save(user);
 
@@ -191,8 +192,8 @@ public class UserImpl implements UserService {
 
         String otp = String.valueOf((int)(Math.random() * 900000) + 100000);
 
-        user.setOtp(otp);
-        user.setOtpExpiry(LocalDateTime.now().plusMinutes(5));
+//        user.setOtp(otp);
+//        user.setOtpExpiry(LocalDateTime.now().plusMinutes(5));
 
         userRepository.save(user);
 
