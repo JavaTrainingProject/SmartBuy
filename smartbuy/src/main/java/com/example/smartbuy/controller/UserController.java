@@ -29,14 +29,14 @@ import org.springframework.web.bind.annotation.*;
 
 
         @GetMapping("/{id}")
-        @PreAuthorize("hasRole('ADMIN')")
+        @PreAuthorize("hasAnyRole('ADMIN','USER')")
         public UserResponseDto getUserById(@PathVariable Long id) {
             return userService.getUserById(id);
         }
 
 
         @PutMapping("/{id}")
-        @PreAuthorize("hasRole('USER')")
+        @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
         public UserResponseDto updateUser(
                 @PathVariable Long id,
                 @RequestBody UserUpdateRequestDto dto) {
