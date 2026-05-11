@@ -155,13 +155,16 @@ public class SubCategoryServiceImpl implements SubCategoryService {
         return new ApiResponse<>("SUCCESS", "Subcategories fetched successfully", response);
     }
     @Override
-    public void deleteSubCategory(Long id) {
+    public void softDeleteSubCategory(Long id) {
 
-        SubCategoryEntity subCategory = subCategoryRepository.findById(id)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("SubCategory not found"));
+        SubCategoryEntity subCategory =
+                subCategoryRepository.findById(id)
+                        .orElseThrow(() ->
+                                new RuntimeException(
+                                        "SubCategory not found"));
 
-        subCategoryRepository.delete(subCategory);
+        subCategory.setStatus(Status.INACTIVE);
+
+        subCategoryRepository.save(subCategory);
     }
-
 }

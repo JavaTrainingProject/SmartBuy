@@ -26,5 +26,5 @@ public interface SubCategoryService {
 
     ApiResponse<List<SubCategoryResponseDto>> getByStatus(Status status);
 
-    void deleteSubCategory(Long id);
+    void softDeleteSubCategory(Long id);
 }

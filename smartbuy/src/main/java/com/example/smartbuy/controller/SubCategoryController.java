@@ -35,14 +35,15 @@ public class SubCategoryController {
         SubCategoryResponseDto dto = subCategoryService.getSubCategoryById(id);
         return ResponseEntity.ok(dto);
     }
-
     @GetMapping("/active")
     @PreAuthorize("hasAnyRole('ADMIN','USER')")
-    public ResponseEntity<ApiResponse<List<SubCategoryResponseDto>>> getActiveSubCategories(
+    public ResponseEntity<ApiResponse<?>> getActiveSubCategories(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
 
-        return ResponseEntity.ok(subCategoryService.getAllActiveSubCategories(page, size));
+        return ResponseEntity.ok(
+                subCategoryService.getAllActiveSubCategories(page, size)
+        );
     }
 
     @GetMapping("/categories/{categoryId}/subcategories")
@@ -108,10 +109,12 @@ public class SubCategoryController {
     }
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<String> delete(@PathVariable Long id) {
+    public ResponseEntity<String> delete(
+            @PathVariable Long id) {
 
-        subCategoryService.deleteSubCategory(id);
+        subCategoryService.softDeleteSubCategory(id);
 
-        return ResponseEntity.ok("SubCategory deleted successfully");
+        return ResponseEntity.ok(
+                "SubCategory deactivated successfully");
     }
     }
