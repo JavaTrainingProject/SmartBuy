@@ -30,7 +30,7 @@ public class SubCategoryMapper {
 
         sub.setSubCategoryName(dto.getSubCategoryName());
         sub.setSubCategoryDescription(dto.getSubCategoryDescription());
-
+        sub.setStatus(dto.getStatus());
         sub.setStatus(Status.ACTIVE);
 
         return sub;

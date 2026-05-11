@@ -14,7 +14,16 @@ public class SubCategoryRequestDto {
     @Size(max = 255)
     private String subCategoryDescription;
     @NotNull(message = "Category ID is required")
+    private Status status;
     private Long categoryId;
+
+    public @NotNull(message = "Category ID is required") Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(@NotNull(message = "Category ID is required") Status status) {
+        this.status = status;
+    }
 
     public Long getCategoryId() {
         return categoryId;

@@ -125,6 +125,7 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 
         subCategoryEntity.setSubCategoryName(dto.getSubCategoryName());
         subCategoryEntity.setSubCategoryDescription(dto.getSubCategoryDescription());
+        subCategoryEntity.setStatus(dto.getStatus());
         subCategoryEntity.setCategory(categoryEntity);
 
         SubCategoryEntity updated = subCategoryRepository.save(subCategoryEntity);
