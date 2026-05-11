@@ -32,9 +32,8 @@ public class SecurityConfig {
                 .cors(cors ->{})
                 .authorizeHttpRequests(auth ->auth
                         .requestMatchers("/api/auth/**").permitAll()
-                     .requestMatchers("/api/admin/dashboard/**").permitAll()
-                    .anyRequest().authenticated()
-
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .anyRequest().authenticated()
                 );
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
