@@ -59,7 +59,7 @@ public class SubCategoryController {
     }
 
     @PatchMapping("/{id}/status")
-    @PreAuthorize("hasRole('ADMIN')")
+   @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<String>> updateStatus(
             @PathVariable Long id,
             @Valid @RequestBody UpdateStatusRequestDto requestDto) {
@@ -106,5 +106,12 @@ public class SubCategoryController {
 
         return ResponseEntity.ok(response);
     }
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<String> delete(@PathVariable Long id) {
 
+        subCategoryService.deleteSubCategory(id);
+
+        return ResponseEntity.ok("SubCategory deleted successfully");
+    }
     }

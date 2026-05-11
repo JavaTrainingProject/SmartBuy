@@ -33,6 +33,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth ->auth
                         .requestMatchers("/api/auth/**").permitAll()
                      .requestMatchers("/api/admin/dashboard/**").permitAll()
+//                        .requestMatchers("/api/category/**").hasRole("ADMIN")
+//                        .requestMatchers("/api/subcategory/**").hasRole("ADMIN")
+                                .requestMatchers("/api/subcategory/**").permitAll()
+                                .requestMatchers("/api/categories/**").permitAll()
                     .anyRequest().authenticated()
 
                 );
