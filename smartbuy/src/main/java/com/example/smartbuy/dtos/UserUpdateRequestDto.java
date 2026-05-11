@@ -15,8 +15,6 @@ public class UserUpdateRequestDto {
         this.name = name;
         this.email = email;
     }
-
-
     public String getName() {
         return name;
     }
@@ -31,6 +29,6 @@ public class UserUpdateRequestDto {
 
     public void setEmail(String email) {
         this.email = email;
-
     }
+
 }

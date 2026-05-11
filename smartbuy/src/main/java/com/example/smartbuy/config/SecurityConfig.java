@@ -32,13 +32,8 @@ public class SecurityConfig {
                 .cors(cors ->{})
                 .authorizeHttpRequests(auth ->auth
                         .requestMatchers("/api/auth/**").permitAll()
-                     .requestMatchers("/api/admin/dashboard/**").permitAll()
-//                        .requestMatchers("/api/category/**").hasRole("ADMIN")
-//                        .requestMatchers("/api/subcategory/**").hasRole("ADMIN")
-                                .requestMatchers("/api/subcategory/**").permitAll()
-                                .requestMatchers("/api/categories/**").permitAll()
-                    .anyRequest().authenticated()
-
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .anyRequest().authenticated()
                 );
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
