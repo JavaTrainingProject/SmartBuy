@@ -26,6 +26,7 @@ public interface CategoryService {
 
     Long getActiveCategoryCount();
 
+
     ApiResponse<Page<CategoryResponseDto>> getAllCategories(
             int page,
             int size,

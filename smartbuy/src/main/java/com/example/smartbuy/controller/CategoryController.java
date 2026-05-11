@@ -80,7 +80,6 @@ public class CategoryController {
             @RequestParam(defaultValue = "id") String sortBy,
             @RequestParam(defaultValue = "asc") String direction
     ) {
-
         return categoryService.getAllCategories(page, size, sortBy, direction);
     }
 }
