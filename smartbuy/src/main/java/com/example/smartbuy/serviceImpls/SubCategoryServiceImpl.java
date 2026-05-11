@@ -1,13 +1,16 @@
 package com.example.smartbuy.serviceImpls;
 
+import com.example.smartbuy.dtos.ProductResponseDto;
 import com.example.smartbuy.dtos.SubCategoryRequestDto;
 import com.example.smartbuy.dtos.SubCategoryResponseDto;
 import com.example.smartbuy.entity.CategoryEntity;
+import com.example.smartbuy.entity.ProductEntity;
 import com.example.smartbuy.entity.SubCategoryEntity;
 import com.example.smartbuy.enums.Status;
 import com.example.smartbuy.exception.ResourceNotFoundException;
 import com.example.smartbuy.mapper.SubCategoryMapper;
 import com.example.smartbuy.repository.CategoryRepository;
+import com.example.smartbuy.repository.ProductRepository;
 import com.example.smartbuy.repository.SubCategoryRepository;
 import com.example.smartbuy.response.ApiResponse;
 import com.example.smartbuy.service.SubCategoryService;
@@ -23,11 +26,15 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 
     private final SubCategoryRepository subCategoryRepository;
     private final CategoryRepository categoryRepository;
+    private final ProductRepository productRepository;
 
     public SubCategoryServiceImpl(SubCategoryRepository subCategoryRepository,
-                                  CategoryRepository categoryRepository) {
+                                  CategoryRepository categoryRepository,
+                                  ProductRepository productRepository) {
+
         this.subCategoryRepository = subCategoryRepository;
         this.categoryRepository = categoryRepository;
+        this.productRepository = productRepository;
     }
 
     @Override
@@ -156,4 +163,78 @@ public class SubCategoryServiceImpl implements SubCategoryService {
     }
 
 
-}
+
+
+
+//        @Override
+//        public ApiResponse<List<ProductResponseDto>> getProductsBySubCategory(
+//                Long subCategoryId, int page, int size) {
+//
+//            Pageable pageable = PageRequest.of(page, size);
+//
+//            Page<ProductEntity> productPage =
+//                    productRepository.findBySubCategory_Id(subCategoryId, pageable);
+//
+//            List<ProductResponseDto> productList =
+//                    productPage.getContent()
+//                            .stream()
+//                            .map(product -> {
+//
+//                                ProductResponseDto dto = new ProductResponseDto();
+//
+//                                dto.setId(product.getId());
+//                                dto.setName(product.getProductName());
+//                                dto.setDescription(product.getProductDescription());
+//                                dto.setPrice(product.getPrice());
+//                                dto.setQuantity(product.getQuantity());
+//                                dto.setImageUrls(List.of(product.getImageUrl()));
+//
+//                                return dto;
+//                            })
+//                            .toList();
+//
+//            return new ApiResponse<>(
+//                    "SUCCESS",
+//                    "Products fetched successfully",
+//                    productList
+//            );
+//        }
+
+
+    @Override
+    public ApiResponse<List<ProductResponseDto>> getProductsBySubCategory(
+            Long subCategoryId, int page, int size) {
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<ProductEntity> productPage =
+                productRepository.findBySubCategory_Id(subCategoryId, pageable);
+
+        List<ProductResponseDto> productList =
+                productPage.getContent()
+                        .stream()
+                        .map(product -> {
+
+                            ProductResponseDto dto = new ProductResponseDto();
+
+                            dto.setId(product.getId());
+                            dto.setName(product.getProductName());
+                            dto.setDescription(product.getProductDescription());
+                            dto.setPrice(product.getPrice());
+                            dto.setQuantity(product.getQuantity());
+
+                            // image mapping
+                            dto.setImageUrls(product.getImageUrl());
+
+                            return dto;
+                        })
+                        .toList();
+
+        return new ApiResponse<>(
+                "SUCCESS",
+                "Products fetched successfully",
+                productList
+        );
+    }
+    }
+

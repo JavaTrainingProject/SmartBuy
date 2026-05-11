@@ -3,6 +3,8 @@ package com.example.smartbuy.mapper;
 import com.example.smartbuy.dtos.ProductResponseDto;
 import com.example.smartbuy.entity.ProductEntity;
 
+import java.util.List;
+
 public class ProductMapper {
 
         public static ProductResponseDto toDto(ProductEntity entity) {
@@ -14,6 +16,7 @@ public class ProductMapper {
             dto.setDescription(entity.getProductDescription());
             dto.setPrice(entity.getPrice());
             dto.setQuantity(entity.getQuantity());
+            //dto.setImageUrls(List.of(entity.getImageUrl()));
             dto.setImageUrls(entity.getImageUrl());
             dto.setCreatedAt(entity.getCreatedAt());
 

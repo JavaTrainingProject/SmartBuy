@@ -1,7 +1,11 @@
 package com.example.smartbuy.service;
 
+import com.example.smartbuy.dtos.ProductPageRespnseDto;
 import com.example.smartbuy.dtos.ProductRequestDto;
 import com.example.smartbuy.dtos.ProductResponseDto;
+import com.example.smartbuy.entity.ProductEntity;
+import com.example.smartbuy.enums.Status;
+import com.example.smartbuy.response.ApiResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
@@ -22,4 +26,11 @@ public interface ProductService {
 
     List<ProductResponseDto> getProductsByStatus(String status);
 
+    ApiResponse<ProductPageRespnseDto> getProductsBySubCategory(
+            Long subCategoryId,
+            int page,
+            int size
+    );
+
+    List<ProductEntity> getAllProductByName(String productName);
 }

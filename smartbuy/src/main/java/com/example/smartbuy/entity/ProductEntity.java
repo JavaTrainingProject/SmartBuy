@@ -1,6 +1,7 @@
 package com.example.smartbuy.entity;
 
 import com.example.smartbuy.enums.ProductStatus;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -24,16 +25,18 @@ public class ProductEntity {
     private Double price;
     private Integer quantity;
 
+    @Column(name = "image_url")
+    private String imageUrls;
+
+
     public String getImageUrl() {
-        return imageUrl;
+        return imageUrls;
     }
 
     public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
+        this.imageUrls = imageUrl;
     }
 
-    @Column(name = "image_url")
-    private String imageUrl;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
@@ -41,10 +44,11 @@ public class ProductEntity {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "subcategory_id")
     private SubCategoryEntity subCategory;
-
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "category_id")
     private CategoryEntity category;

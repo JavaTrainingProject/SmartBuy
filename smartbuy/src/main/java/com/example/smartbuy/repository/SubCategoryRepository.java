@@ -1,5 +1,6 @@
 package com.example.smartbuy.repository;
 
+import com.example.smartbuy.entity.ProductEntity;
 import com.example.smartbuy.entity.SubCategoryEntity;
 import com.example.smartbuy.enums.Status;
 import org.springframework.data.domain.Page;
@@ -16,9 +17,7 @@ public interface SubCategoryRepository extends JpaRepository<SubCategoryEntity, 
 
     List<SubCategoryEntity> findByStatus(Status status); //I added this
 
-    Page<SubCategoryEntity> findByCategoryIdAndStatus(
-            Long categoryId,
-            Status status,
-            Pageable pageable
-    );
+    Page<SubCategoryEntity> findByCategoryIdAndStatus(Long categoryId, Status status, Pageable pageable);
+
+
 }

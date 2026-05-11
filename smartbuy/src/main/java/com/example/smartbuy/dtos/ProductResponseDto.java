@@ -9,7 +9,7 @@ public class ProductResponseDto {
     private String description;
     private Double price;
     private Integer quantity;
-    private String imageUrls;
+   private String imageUrls;
     private String categoryName;
     private String subCategoryName;
 
@@ -79,7 +79,25 @@ public class ProductResponseDto {
         this.createdAt = createdAt;
     }
 
-    public String getImageUrls() { return imageUrls; }
+//    public String getImageUrls() { return imageUrls; }
+//
+//    public void setImageUrls(String imageUrls) { this.imageUrls = imageUrls; }
 
-    public void setImageUrls(String imageUrls) { this.imageUrls = imageUrls; }
+
+//    public List<String> getImageUrls() {
+//        return imageUrls;
+//    }
+//
+//    public void setImageUrls(List<String> imageUrls) {
+//        this.imageUrls = imageUrls;
+//    }
+
+
+    public String getImageUrls() {
+        return imageUrls;
+    }
+
+    public void setImageUrls(String imageUrls) {
+        this.imageUrls = imageUrls;
+    }
 }

@@ -1,17 +1,23 @@
 package com.example.smartbuy.serviceImpls;
 
+import com.example.smartbuy.dtos.ProductPageRespnseDto;
 import com.example.smartbuy.dtos.ProductRequestDto;
 import com.example.smartbuy.dtos.ProductResponseDto;
 import com.example.smartbuy.entity.*;
 import com.example.smartbuy.enums.ProductStatus;
 import com.example.smartbuy.exception.ResourceNotFoundException;
+import com.example.smartbuy.mapper.ProductMapper;
 import com.example.smartbuy.repository.CategoryRepository;
 import com.example.smartbuy.repository.ProductImageRepository;
 import com.example.smartbuy.repository.ProductRepository;
 import com.example.smartbuy.repository.SubCategoryRepository;
+import com.example.smartbuy.response.ApiResponse;
 import com.example.smartbuy.service.ProductService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,6 +32,7 @@ import java.util.List;
 @Service
 public class ProductServiceImpl implements ProductService {
 
+    private static final Logger log = LoggerFactory.getLogger(ProductServiceImpl.class);
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
     private final SubCategoryRepository subCategoryRepository;
@@ -144,7 +151,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
 
-    private String uploadImage(MultipartFile file) {
+ /*   private String uploadImage(MultipartFile file) {
 
         if (file == null || file.isEmpty()) return null;
 
@@ -165,14 +172,44 @@ public class ProductServiceImpl implements ProductService {
             File destination = new File(dir, fileName);
             file.transferTo(destination);
 
-            return "/uploads/" + fileName;
+          //  return "/uploads/" + fileName;
+
+            return baseUrl + "/uploads/" + fileName;
 
         } catch (Exception e) {
             throw new IllegalStateException("File upload failed: " + file.getOriginalFilename());
         }
     }
 
+*/
 
+
+    private String uploadImage(MultipartFile file) {
+
+        if (file == null || file.isEmpty()) return null;
+
+        try {
+            File dir = new File(uploadDir);
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
+
+            String originalName = file.getOriginalFilename();
+            String cleanName = originalName != null
+                    ? originalName.replaceAll("\\s+", "_")
+                    : "image";
+
+            String fileName = System.currentTimeMillis() + "_" + cleanName;
+
+            File destination = new File(dir, fileName);
+            file.transferTo(destination);
+
+            return baseUrl + "/uploads/" + fileName;
+
+        } catch (Exception e) {
+            throw new RuntimeException("Image upload failed");
+        }
+    }
     private List<ProductImage> saveImages(List<MultipartFile> images, ProductEntity product) {
 
         List<ProductImage> list = new ArrayList<>();
@@ -233,6 +270,7 @@ public class ProductServiceImpl implements ProductService {
         }
 
         if (product.getImageUrl() != null) {
+           // dto.setImageUrls(List.of(product.getImageUrl()));
             dto.setImageUrls(product.getImageUrl());
         }
 
@@ -255,4 +293,50 @@ public class ProductServiceImpl implements ProductService {
                 .map(this::mapToResponse)
                 .toList();
     }
+
+
+
+
+
+
+    @Override
+    public ApiResponse<ProductPageRespnseDto> getProductsBySubCategory(Long subCategoryId, int page, int size) {
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<ProductEntity> productPage =
+                productRepository.findBySubCategory_Id(subCategoryId, pageable);
+
+        List<ProductResponseDto> productDtos =
+                productPage.getContent()
+                        .stream()
+                        .map(this::mapToResponse)
+                        .toList();
+
+        ProductPageRespnseDto responseDto = new ProductPageRespnseDto();
+
+        responseDto.setTotalProducts(productPage.getTotalElements());
+
+        responseDto.setProducts(productDtos);
+
+        return new ApiResponse<>(
+                "SUCCESS",
+                "Products fetched successfully",
+                responseDto
+        );
+    }
+
+
+    public List<ProductEntity> getAllProductByName(String name ){
+        log.info("Product by name " + name );
+
+       List<ProductEntity> allProduct =  productRepository.findByProductName(name);
+
+       log.info("Product by name " + allProduct);
+
+       return allProduct;
+
+    }
+
+
 }
