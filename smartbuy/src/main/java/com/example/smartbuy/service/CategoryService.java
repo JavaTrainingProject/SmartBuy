@@ -4,6 +4,8 @@ import com.example.smartbuy.response.ApiResponse;
 import com.example.smartbuy.dtos.CategoryRequestDto;
 import com.example.smartbuy.dtos.CategoryResponseDto;
 import com.example.smartbuy.dtos.CategoryWithProductsResponseDto;
+import org.springframework.data.domain.Page;
+
 import java.util.List;
 
 public interface CategoryService {
@@ -23,4 +25,11 @@ public interface CategoryService {
     ApiResponse<List<CategoryResponseDto>> getAllCategories(int page, int size);
 
     Long getActiveCategoryCount();
+
+    ApiResponse<Page<CategoryResponseDto>> getAllCategories(
+            int page,
+            int size,
+            String sortBy,
+            String direction
+    );
 }
