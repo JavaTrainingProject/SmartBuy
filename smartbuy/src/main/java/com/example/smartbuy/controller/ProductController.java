@@ -31,6 +31,7 @@ public class ProductController {
     }
 
     @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<ProductResponseDto>> createProduct(
             @RequestParam("product") String productJson,
             @RequestParam(value = "images", required = false) MultipartFile images) throws Exception {
@@ -46,6 +47,7 @@ public class ProductController {
 
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     public ResponseEntity<ApiResponse<Page<ProductResponseDto>>> getAllProducts(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
@@ -57,6 +59,7 @@ public class ProductController {
 
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     public ResponseEntity<ApiResponse<ProductResponseDto>> getProductById(@PathVariable Long id) {
 
         ProductResponseDto response = productService.getProductById(id);
@@ -66,6 +69,7 @@ public class ProductController {
 
 
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<ProductResponseDto>> updateProduct(
             @PathVariable Long id,
             @RequestParam("product") String productJson,
@@ -82,6 +86,7 @@ public class ProductController {
 
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<String>> deleteProduct(@PathVariable Long id) {
 
         String message = productService.deleteProduct(id);
@@ -91,6 +96,7 @@ public class ProductController {
 
 
     @PatchMapping("/{id}/status")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<String>> updateStatus(
             @PathVariable Long id,
             @RequestParam String status) {
@@ -104,6 +110,7 @@ public class ProductController {
 
 
     @GetMapping("/status")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     public ResponseEntity<ApiResponse<List<ProductResponseDto>>> getProductsByStatus(
             @RequestParam String status) {
 

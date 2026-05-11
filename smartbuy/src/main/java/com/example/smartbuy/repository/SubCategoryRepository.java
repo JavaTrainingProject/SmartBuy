@@ -15,7 +15,9 @@ public interface SubCategoryRepository extends JpaRepository<SubCategoryEntity, 
 
     Page<SubCategoryEntity> findByStatus(Status status, Pageable pageable);
 
-    List<SubCategoryEntity> findByStatus(Status status); //I added this
+    List<SubCategoryEntity> findByStatus(Status status);
+
+    Long countByStatus(Status status);
 
     Page<SubCategoryEntity> findByCategoryIdAndStatus(Long categoryId, Status status, Pageable pageable);
 

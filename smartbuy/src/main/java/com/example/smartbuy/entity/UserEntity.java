@@ -20,8 +20,6 @@ public class UserEntity {
         private String password;
         @Enumerated(EnumType.STRING)
         private Role role;
-
-
         private String refreshToken;
         private LocalDateTime createdAt;
         private LocalDateTime updatedAt;
@@ -91,6 +89,6 @@ public class UserEntity {
         }
 
 
+        }
 
-    }
 
