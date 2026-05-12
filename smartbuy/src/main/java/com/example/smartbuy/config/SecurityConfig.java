@@ -4,6 +4,7 @@ package com.example.smartbuy.config;
 import com.example.smartbuy.security.JWTFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -32,8 +33,14 @@ public class SecurityConfig {
                 .cors(cors ->{})
                 .authorizeHttpRequests(auth ->auth
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                        .anyRequest().authenticated()
+                     .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/user/**").hasRole("USER")
+                        .requestMatchers(HttpMethod.POST, "/api/products/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/products/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/products/**").hasRole("ADMIN")
+                        .requestMatchers("/api/products/**").hasAnyRole("ADMIN","USER")
+                    .anyRequest().authenticated()
+
                 );
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
