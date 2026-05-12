@@ -10,10 +10,6 @@ public class SubCategoryRequestDto {
     @NotBlank(message = "SubCategory name is required")
     @Size(min = 2, max = 100)
     private String subCategoryName;
-    @NotBlank(message = "Description name is required")
-    @Size(max = 255)
-    private String subCategoryDescription;
-    @NotNull(message = "Category ID is required")
     private Status status;
     private Long categoryId;
 
@@ -41,11 +37,5 @@ public class SubCategoryRequestDto {
         this.subCategoryName = subCategoryName;
     }
 
-    public String getSubCategoryDescription() {
-        return subCategoryDescription;
-    }
 
-    public void setSubCategoryDescription(String subCategoryDescription) {
-        this.subCategoryDescription = subCategoryDescription;
-    }
 }

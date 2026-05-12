@@ -124,7 +124,7 @@ public class SubCategoryServiceImpl implements SubCategoryService {
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "id", dto.getCategoryId()));
 
         subCategoryEntity.setSubCategoryName(dto.getSubCategoryName());
-        subCategoryEntity.setSubCategoryDescription(dto.getSubCategoryDescription());
+
         subCategoryEntity.setStatus(dto.getStatus());
         subCategoryEntity.setCategory(categoryEntity);
 
