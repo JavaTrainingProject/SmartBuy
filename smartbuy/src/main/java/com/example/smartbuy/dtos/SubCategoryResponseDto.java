@@ -5,7 +5,7 @@ import com.example.smartbuy.enums.Status;
 public class SubCategoryResponseDto {
     private Long id;
     private String subCategoryName;
-    private String subCategoryDescription;
+
     private Long categoryId;
     private String categoryName;
     private Status status;
@@ -17,12 +17,6 @@ public class SubCategoryResponseDto {
     public void setSubCategoryName(String subCategoryName) {
         this.subCategoryName = subCategoryName;
     }
-
-    public String getSubCategoryDescription() {
-        return subCategoryDescription;
-    }
-
-    public void setSubCategoryDescription(String subCategoryDescription) {this.subCategoryDescription = subCategoryDescription;}
 
     public Long getCategoryId() {
         return categoryId;
