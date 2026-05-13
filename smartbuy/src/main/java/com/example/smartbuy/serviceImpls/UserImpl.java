@@ -61,7 +61,13 @@ public class UserImpl implements UserService {
         emailService.sendOtpEmail(dto.getEmail(), otp);
         otpExpiryMap.put(dto.getEmail(), LocalDateTime.now().plusMinutes(5));
 
-        return new UserResponseDto();
+        UserResponseDto response = new UserResponseDto();
+
+        response.setUser_name(dto.getUser_name());
+        response.setEmail(dto.getEmail());
+        response.setOtp(otp);
+
+        return response;
     }
 
     @Override
