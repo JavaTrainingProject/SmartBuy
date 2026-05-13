@@ -122,6 +122,7 @@ public class SubCategoryServiceImpl implements SubCategoryService {
     ) {
 
         SubCategoryEntity subCategoryEntity =
+
                 subCategoryRepository.findById(id)
                         .orElseThrow(() ->
                                 new ResourceNotFoundException(
