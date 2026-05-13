@@ -116,18 +116,57 @@ public class SubCategoryServiceImpl implements SubCategoryService {
     }
 
     @Override
-    public SubCategoryResponseDto updateSubCategory(Long id, SubCategoryRequestDto dto) {
-        SubCategoryEntity subCategoryEntity = subCategoryRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("SubCategory", "id", id));
+    public SubCategoryResponseDto updateSubCategory(
+            Long id,
+            SubCategoryRequestDto dto
+    ) {
 
-        CategoryEntity categoryEntity = categoryRepository.findById(dto.getCategoryId())
-                .orElseThrow(() -> new ResourceNotFoundException("Category", "id", dto.getCategoryId()));
+        SubCategoryEntity subCategoryEntity =
+                subCategoryRepository.findById(id)
+                        .orElseThrow(() ->
+                                new ResourceNotFoundException(
+                                        "SubCategory",
+                                        "id",
+                                        id
+                                ));
 
-        subCategoryEntity.setSubCategoryName(dto.getSubCategoryName());
-        subCategoryEntity.setSubCategoryDescription(dto.getSubCategoryDescription());
+        CategoryEntity categoryEntity =
+                categoryRepository.findById(dto.getCategoryId())
+                        .orElseThrow(() ->
+                                new ResourceNotFoundException(
+                                        "Category",
+                                        "id",
+                                        dto.getCategoryId()
+                                ));
+
+
+        if (
+                subCategoryRepository
+                        .existsBySubCategoryNameIgnoreCaseAndIdNot(
+                                dto.getSubCategoryName(),
+                                id
+                        )
+        ) {
+
+            throw new RuntimeException(
+                    "SubCategory already exists"
+            );
+        }
+
+
+        subCategoryEntity.setSubCategoryName(
+                dto.getSubCategoryName()
+        );
+
         subCategoryEntity.setCategory(categoryEntity);
 
-        SubCategoryEntity updated = subCategoryRepository.save(subCategoryEntity);
+        if (dto.getStatus() != null) {
+            subCategoryEntity.setStatus(dto.getStatus());
+        }
+
+        SubCategoryEntity updated =
+                subCategoryRepository.save(subCategoryEntity);
+
         return SubCategoryMapper.toDto(updated);
     }
 
@@ -154,6 +193,17 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 
         return new ApiResponse<>("SUCCESS", "Subcategories fetched successfully", response);
     }
+    @Override
+    public void softDeleteSubCategory(Long id) {
 
+        SubCategoryEntity subCategory =
+                subCategoryRepository.findById(id)
+                        .orElseThrow(() ->
+                                new RuntimeException(
+                                        "SubCategory not found"));
 
+        subCategory.setStatus(Status.INACTIVE);
+
+        subCategoryRepository.save(subCategory);
+    }
 }

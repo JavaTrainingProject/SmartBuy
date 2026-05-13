@@ -13,7 +13,7 @@ public class SubCategoryMapper {
 
         dto.setId(sub.getId());
         dto.setSubCategoryName(sub.getSubCategoryName());
-        dto.setSubCategoryDescription(sub.getSubCategoryDescription());
+
         dto.setStatus(sub.getStatus());
 
         if (sub.getCategory() != null) {
@@ -29,8 +29,8 @@ public class SubCategoryMapper {
         SubCategoryEntity sub = new SubCategoryEntity();
 
         sub.setSubCategoryName(dto.getSubCategoryName());
-        sub.setSubCategoryDescription(dto.getSubCategoryDescription());
 
+        sub.setStatus(dto.getStatus());
         sub.setStatus(Status.ACTIVE);
 
         return sub;

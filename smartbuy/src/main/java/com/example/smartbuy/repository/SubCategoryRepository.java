@@ -12,6 +12,11 @@ public interface SubCategoryRepository extends JpaRepository<SubCategoryEntity, 
 
     boolean existsBySubCategoryNameIgnoreCase(String subCategoryName);
 
+    boolean existsBySubCategoryNameIgnoreCaseAndIdNot(
+            String subCategoryName,
+            Long id
+    );
+
     Page<SubCategoryEntity> findByStatus(Status status, Pageable pageable);
 
     List<SubCategoryEntity> findByStatus(Status status);
