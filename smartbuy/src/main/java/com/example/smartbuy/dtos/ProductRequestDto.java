@@ -18,7 +18,8 @@ public class ProductRequestDto {
     private Double product_price;
 
     private Integer quantity;
-    private List<String> imageUrls;
+
+    private String imageUrl;
 
     @NotNull(message = "CategoryId is required")
     private Long categoryId;
@@ -26,9 +27,9 @@ public class ProductRequestDto {
     @NotNull(message = "SubCategoryId is required")
     private Long subCategoryId;
 
-    public List<String> getImageUrls() { return imageUrls;}
+    public String getImageUrl() {return imageUrl;}
 
-    public void setImageUrls(List<String> imageUrls) {this.imageUrls = imageUrls;}
+    public void setImageUrl(String imageUrl) {this.imageUrl = imageUrl;}
 
     public String getProduct_name() {
         return product_name;

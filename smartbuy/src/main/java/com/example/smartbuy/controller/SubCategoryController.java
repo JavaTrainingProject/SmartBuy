@@ -1,5 +1,6 @@
 package com.example.smartbuy.controller;
 
+import com.example.smartbuy.dtos.ProductResponseDto;
 import com.example.smartbuy.dtos.SubCategoryRequestDto;
 import com.example.smartbuy.dtos.SubCategoryResponseDto;
 import com.example.smartbuy.dtos.UpdateStatusRequestDto;
@@ -23,7 +24,7 @@ public class SubCategoryController {
         }
 
         @PostMapping
-        @PreAuthorize("hasRole('ADMIN')")
+       @PreAuthorize("hasRole('ADMIN')")
         public ResponseEntity<SubCategoryResponseDto> create(
                 @RequestBody SubCategoryRequestDto dto) {
 

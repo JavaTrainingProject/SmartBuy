@@ -2,7 +2,6 @@ package com.example.smartbuy.exception;
 
 import com.example.smartbuy.response.ApiResponse;
 import com.example.smartbuy.response.ErrorResponse;
-import org.apache.tomcat.util.http.fileupload.FileUploadException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;

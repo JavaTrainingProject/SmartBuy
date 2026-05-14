@@ -9,7 +9,7 @@ public class ProductImage {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String imageUrl;
+    private String imageUrls;
 
     @ManyToOne
     @JoinColumn(name = "product_id")
@@ -19,9 +19,9 @@ public class ProductImage {
 
     public void setId(long id) { this.id = id; }
 
-    public String getImageUrl() { return imageUrl; }
+    public String getImageUrl() { return imageUrls; }
 
-    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
+    public void setImageUrl(String imageUrl) { this.imageUrls = imageUrls; }
 
     public ProductEntity getProduct() { return product; }
 

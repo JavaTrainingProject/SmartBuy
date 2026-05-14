@@ -1,13 +1,16 @@
 package com.example.smartbuy.serviceImpls;
 
+import com.example.smartbuy.dtos.ProductResponseDto;
 import com.example.smartbuy.dtos.SubCategoryRequestDto;
 import com.example.smartbuy.dtos.SubCategoryResponseDto;
 import com.example.smartbuy.entity.CategoryEntity;
+import com.example.smartbuy.entity.ProductEntity;
 import com.example.smartbuy.entity.SubCategoryEntity;
 import com.example.smartbuy.enums.Status;
 import com.example.smartbuy.exception.ResourceNotFoundException;
 import com.example.smartbuy.mapper.SubCategoryMapper;
 import com.example.smartbuy.repository.CategoryRepository;
+import com.example.smartbuy.repository.ProductRepository;
 import com.example.smartbuy.repository.SubCategoryRepository;
 import com.example.smartbuy.response.ApiResponse;
 import com.example.smartbuy.service.SubCategoryService;
@@ -23,11 +26,15 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 
     private final SubCategoryRepository subCategoryRepository;
     private final CategoryRepository categoryRepository;
+    private final ProductRepository productRepository;
 
     public SubCategoryServiceImpl(SubCategoryRepository subCategoryRepository,
-                                  CategoryRepository categoryRepository) {
+                                  CategoryRepository categoryRepository,
+                                  ProductRepository productRepository) {
+
         this.subCategoryRepository = subCategoryRepository;
         this.categoryRepository = categoryRepository;
+        this.productRepository = productRepository;
     }
 
     @Override
@@ -52,6 +59,7 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 
         return SubCategoryMapper.toDto(saved);
     }
+
     @Override
     public SubCategoryResponseDto getSubCategoryById(Long id) {
         SubCategoryEntity subCategoryEntity = subCategoryRepository.findById(id)
@@ -63,7 +71,7 @@ public class SubCategoryServiceImpl implements SubCategoryService {
     public ApiResponse<List<SubCategoryResponseDto>> getAllActiveSubCategories(int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
 
-        Page<SubCategoryEntity> subCategoryPage = subCategoryRepository.findByStatus(Status.ACTIVE,pageable);
+        Page<SubCategoryEntity> subCategoryPage = subCategoryRepository.findByStatus(Status.ACTIVE, pageable);
 
         List<SubCategoryResponseDto> responseList = subCategoryPage.getContent()
                 .stream()
@@ -71,7 +79,7 @@ public class SubCategoryServiceImpl implements SubCategoryService {
                 .toList();
 
         return new ApiResponse<>("SUCCESS",
-                "Active subcategories fetched successfully",responseList
+                "Active subcategories fetched successfully", responseList
         );
     }
 
@@ -97,7 +105,7 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 
         return new ApiResponse<>("SUCCESS",
                 "Active subcategories fetched successfully",
-                 responseList);
+                responseList);
     }
 
     @Override
@@ -193,17 +201,90 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 
         return new ApiResponse<>("SUCCESS", "Subcategories fetched successfully", response);
     }
+
     @Override
-    public void softDeleteSubCategory(Long id) {
+    public ApiResponse<List<ProductResponseDto>>
+    softDeleteSubCategory(Long id) {
 
         SubCategoryEntity subCategory =
                 subCategoryRepository.findById(id)
                         .orElseThrow(() ->
                                 new RuntimeException(
-                                        "SubCategory not found"));
+                                        "SubCategory not found"
+                                ));
 
         subCategory.setStatus(Status.INACTIVE);
 
         subCategoryRepository.save(subCategory);
+
+        return new ApiResponse<>(
+
+                "SUCCESS",
+
+                "SubCategory deleted successfully",
+
+                null
+        );
     }
+
+        @Override
+        public ApiResponse<List<ProductResponseDto>> getProductsBySubCategory(
+                Long subCategoryId,
+                int page,
+                int size
+        ) {
+
+            Pageable pageable =
+                    PageRequest.of(page, size);
+
+            Page<ProductEntity> productPage =
+                    productRepository.findBySubCategory_Id(
+                            subCategoryId,
+                            pageable
+                    );
+
+            List<ProductResponseDto> productList =
+                    productPage.getContent()
+                            .stream()
+                            .map(product -> {
+
+                                ProductResponseDto dto =
+                                        new ProductResponseDto();
+
+                                dto.setId(product.getId());
+
+                                dto.setName(
+                                        product.getProductName()
+                                );
+
+                                dto.setDescription(
+                                        product.getProductDescription()
+                                );
+
+                                dto.setPrice(
+                                        product.getPrice()
+                                );
+
+                                dto.setQuantity(
+                                        product.getQuantity()
+                                );
+
+                                dto.setImageUrl(
+                                        product.getImageUrl()
+                                );
+
+                                return dto;
+                            })
+                            .toList();
+
+            return new ApiResponse<>(
+
+                    "SUCCESS",
+
+                    "Products fetched successfully",
+
+                    productList
+            );
+        }
 }
+

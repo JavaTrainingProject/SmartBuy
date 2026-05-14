@@ -8,92 +8,136 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
+
 @Entity
 @Table(name = "Products")
 public class ProductEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "product_id")
-    private Long id;
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        @Column(name = "product_id")
+        private Long id;
 
-    @Column(name = "product_name")
-    private String productName;
+        @Column(name = "product_name")
+        private String productName;
 
-    @Column(name = "product_description")
-    private String productDescription;
+        @Column(name = "product_description")
+        private String productDescription;
 
-    private Double price;
-    private Integer quantity;
+        private Double price;
 
-    @Column(name = "image_url")
-    private String imageUrls;
+        private Integer quantity;
 
+
+        @Column(name = "image_url")
+        private String imageUrl;
+
+        @CreationTimestamp
+        private LocalDateTime createdAt;
+
+        @UpdateTimestamp
+        private LocalDateTime updatedAt;
+
+
+        @JsonIgnore
+        @ManyToOne
+        @JoinColumn(name = "subcategory_id")
+        private SubCategoryEntity subCategory;
+
+        @JsonIgnore
+        @ManyToOne
+        @JoinColumn(name = "category_id")
+        private CategoryEntity category;
+
+        @Enumerated(EnumType.STRING)
+        private ProductStatus status = ProductStatus.ACTIVE;
+
+        public Long getId() {
+            return id;
+        }
+
+        public void setId(Long id) {
+            this.id = id;
+        }
+
+        public String getProductName() {
+            return productName;
+        }
+
+        public void setProductName(String productName) {
+            this.productName = productName;
+        }
+
+        public String getProductDescription() {
+            return productDescription;
+        }
+
+        public void setProductDescription(String productDescription) {
+            this.productDescription = productDescription;
+        }
+
+        public Double getPrice() {
+            return price;
+        }
+
+        public void setPrice(Double price) {
+            this.price = price;
+        }
+
+        public Integer getQuantity() {
+            return quantity;
+        }
+
+        public void setQuantity(Integer quantity) {
+            this.quantity = quantity;
+        }
+
+        public LocalDateTime getCreatedAt() {
+            return createdAt;
+        }
 
     public String getImageUrl() {
-        return imageUrls;
+        return imageUrl;
     }
 
     public void setImageUrl(String imageUrl) {
-        this.imageUrls = imageUrl;
+        this.imageUrl = imageUrl;
     }
 
+    public void setCreatedAt(LocalDateTime createdAt) {
+            this.createdAt = createdAt;
+        }
 
-    @CreationTimestamp
-    private LocalDateTime createdAt;
+        public LocalDateTime getUpdatedAt() {
+            return updatedAt;
+        }
 
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
+        public void setUpdatedAt(LocalDateTime updatedAt) {
+            this.updatedAt = updatedAt;
+        }
 
-    @JsonIgnore
-    @ManyToOne
-    @JoinColumn(name = "subcategory_id")
-    private SubCategoryEntity subCategory;
-    @JsonIgnore
-    @ManyToOne
-    @JoinColumn(name = "category_id")
-    private CategoryEntity category;
+        public SubCategoryEntity getSubCategory() {
+            return subCategory;
+        }
 
-    @Enumerated(EnumType.STRING)
-    private ProductStatus status=ProductStatus.ACTIVE;
+        public void setSubCategory(SubCategoryEntity subCategory) {
+            this.subCategory = subCategory;
+        }
 
-    public ProductStatus getStatus() {return status;}
+        public CategoryEntity getCategory() {
+            return category;
+        }
 
-    public void setStatus(ProductStatus status) {this.status = status;}
+        public void setCategory(CategoryEntity category) {
+            this.category = category;
+        }
 
-    public SubCategoryEntity getSubCategory() {return subCategory;}
+        public ProductStatus getStatus() {
+            return status;
+        }
 
-    public void setSubCategory(SubCategoryEntity subCategory) {this.subCategory = subCategory;}
+        public void setStatus(ProductStatus status) {
+            this.status = status;
+        }
 
-    public Long getId() {return id;}
-
-    public void setId(Long id) {this.id = id;}
-
-    public String getProductName() {return productName;}
-
-    public void setProductName(String productName) {this.productName = productName;}
-
-    public String getProductDescription() {return productDescription;}
-
-    public void setProductDescription(String productDescription) {this.productDescription = productDescription;}
-
-    public Double getPrice() {return price;}
-
-    public void setPrice(Double price) {this.price = price;}
-
-    public Integer getQuantity() {return quantity;}
-
-    public void setQuantity(Integer quantity) {this.quantity = quantity;}
-
-    public LocalDateTime getCreatedAt() {return createdAt;}
-
-    public void setCreatedAt(LocalDateTime createdAt) {this.createdAt = createdAt;}
-
-    public LocalDateTime getUpdatedAt() {return updatedAt;}
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {this.updatedAt = updatedAt;}
-
-    public CategoryEntity getCategory() {return category;}
-
-    public void setCategory(CategoryEntity category) {this.category = category;}
 
 }
