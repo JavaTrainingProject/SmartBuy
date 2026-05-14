@@ -11,6 +11,7 @@ public class ProductRequestDto {
     @NotBlank(message = "Name is required")
     @Size(min = 3, max = 50, message = "Name must be 3-50 characters")
     private String product_name;
+    private Integer stock;
 
     private String product_description;
 
@@ -18,8 +19,7 @@ public class ProductRequestDto {
     private Double product_price;
 
     private Integer quantity;
-
-    private String imageUrl;
+    private List<String> imageUrls;
 
     @NotNull(message = "CategoryId is required")
     private Long categoryId;
@@ -27,9 +27,13 @@ public class ProductRequestDto {
     @NotNull(message = "SubCategoryId is required")
     private Long subCategoryId;
 
-    public String getImageUrl() {return imageUrl;}
+    public List<String> getImageUrls() {
+        return imageUrls;
+    }
 
-    public void setImageUrl(String imageUrl) {this.imageUrl = imageUrl;}
+    public void setImageUrls(List<String> imageUrls) {
+        this.imageUrls = imageUrls;
+    }
 
     public String getProduct_name() {
         return product_name;
@@ -75,7 +79,10 @@ public class ProductRequestDto {
         return subCategoryId;
     }
 
-    public void setSubCategoryId(Long subCategoryId) {
-        this.subCategoryId = subCategoryId;
-    }
+    public void setSubCategoryId(Long subCategoryId) {this.subCategoryId = subCategoryId;}
+
+    public Integer getStock() {return stock;}
+
+    public void setStock(Integer stock) {this.stock = stock;}
+
 }
