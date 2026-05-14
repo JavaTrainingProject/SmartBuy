@@ -14,8 +14,6 @@ public class SubCategoryEntity {
     private Long id;
     @Column(name = "subCategory_name")
     private String subCategoryName;
-    @Column(name = "subCategory_description")
-    private String subCategoryDescription;
     @Enumerated(EnumType.STRING)
     @Column(name ="subCategory_status")
     private Status status;
@@ -41,13 +39,7 @@ public class SubCategoryEntity {
         this.subCategoryName = subCategoryName;
     }
 
-    public String getSubCategoryDescription() {
-        return subCategoryDescription;
-    }
 
-    public void setSubCategoryDescription(String subCategoryDescription) {
-        this.subCategoryDescription = subCategoryDescription;
-    }
 
     public Status getStatus() {
         return status;

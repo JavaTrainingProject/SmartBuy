@@ -1,14 +1,15 @@
 package com.example.smartbuy.controller;
 
-import com.example.smartbuy.dtos.ProductPageRespnseDto;
 import com.example.smartbuy.response.ApiResponse;
 import com.example.smartbuy.dtos.ProductRequestDto;
 import com.example.smartbuy.dtos.ProductResponseDto;
 import com.example.smartbuy.service.ProductService;
+import com.example.smartbuy.service.SubCategoryService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,9 +17,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @Validated
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
-@RequestMapping("/products")
-//@CrossOrigin(origins = "http://localhost:5173")
+@RequestMapping("/api/products")
 public class ProductController {
 
     private final ProductService productService;
@@ -108,7 +109,7 @@ public class ProductController {
         );
     }
 
-
+//sub categories
     @GetMapping("/status")
     @PreAuthorize("hasAnyRole('ADMIN','USER')")
     public ResponseEntity<ApiResponse<List<ProductResponseDto>>> getProductsByStatus(
@@ -122,27 +123,6 @@ public class ProductController {
         );
     }
 
-
-
-
-
-    @GetMapping("/subcategory/{subCategoryId}")
-    public ResponseEntity<ApiResponse<ProductPageRespnseDto>> getProductsBySubCategory(
-            @PathVariable Long subCategoryId,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-
-        ApiResponse<ProductPageRespnseDto> response =
-                productService.getProductsBySubCategory(subCategoryId, page, size);
-
-        return ResponseEntity.ok(response);
-    }
-
-    @GetMapping("/getall-product")
-    public ResponseEntity<?> getAllProductByName(@RequestParam String productName) {
-          var productList =   productService.getAllProductByName(productName);
-          return ResponseEntity.ok(productList);
-    }
 }
 
 

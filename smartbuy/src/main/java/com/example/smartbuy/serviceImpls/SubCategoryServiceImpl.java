@@ -1,16 +1,13 @@
 package com.example.smartbuy.serviceImpls;
 
-import com.example.smartbuy.dtos.ProductResponseDto;
 import com.example.smartbuy.dtos.SubCategoryRequestDto;
 import com.example.smartbuy.dtos.SubCategoryResponseDto;
 import com.example.smartbuy.entity.CategoryEntity;
-import com.example.smartbuy.entity.ProductEntity;
 import com.example.smartbuy.entity.SubCategoryEntity;
 import com.example.smartbuy.enums.Status;
 import com.example.smartbuy.exception.ResourceNotFoundException;
 import com.example.smartbuy.mapper.SubCategoryMapper;
 import com.example.smartbuy.repository.CategoryRepository;
-import com.example.smartbuy.repository.ProductRepository;
 import com.example.smartbuy.repository.SubCategoryRepository;
 import com.example.smartbuy.response.ApiResponse;
 import com.example.smartbuy.service.SubCategoryService;
@@ -26,15 +23,11 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 
     private final SubCategoryRepository subCategoryRepository;
     private final CategoryRepository categoryRepository;
-    private final ProductRepository productRepository;
 
     public SubCategoryServiceImpl(SubCategoryRepository subCategoryRepository,
-                                  CategoryRepository categoryRepository,
-                                  ProductRepository productRepository) {
-
+                                  CategoryRepository categoryRepository) {
         this.subCategoryRepository = subCategoryRepository;
         this.categoryRepository = categoryRepository;
-        this.productRepository = productRepository;
     }
 
     @Override
@@ -123,18 +116,57 @@ public class SubCategoryServiceImpl implements SubCategoryService {
     }
 
     @Override
-    public SubCategoryResponseDto updateSubCategory(Long id, SubCategoryRequestDto dto) {
-        SubCategoryEntity subCategoryEntity = subCategoryRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("SubCategory", "id", id));
+    public SubCategoryResponseDto updateSubCategory(
+            Long id,
+            SubCategoryRequestDto dto
+    ) {
 
-        CategoryEntity categoryEntity = categoryRepository.findById(dto.getCategoryId())
-                .orElseThrow(() -> new ResourceNotFoundException("Category", "id", dto.getCategoryId()));
+        SubCategoryEntity subCategoryEntity =
+                subCategoryRepository.findById(id)
+                        .orElseThrow(() ->
+                                new ResourceNotFoundException(
+                                        "SubCategory",
+                                        "id",
+                                        id
+                                ));
 
-        subCategoryEntity.setSubCategoryName(dto.getSubCategoryName());
-        subCategoryEntity.setSubCategoryDescription(dto.getSubCategoryDescription());
+        CategoryEntity categoryEntity =
+                categoryRepository.findById(dto.getCategoryId())
+                        .orElseThrow(() ->
+                                new ResourceNotFoundException(
+                                        "Category",
+                                        "id",
+                                        dto.getCategoryId()
+                                ));
+
+
+        if (
+                subCategoryRepository
+                        .existsBySubCategoryNameIgnoreCaseAndIdNot(
+                                dto.getSubCategoryName(),
+                                id
+                        )
+        ) {
+
+            throw new RuntimeException(
+                    "SubCategory already exists"
+            );
+        }
+
+
+        subCategoryEntity.setSubCategoryName(
+                dto.getSubCategoryName()
+        );
+
         subCategoryEntity.setCategory(categoryEntity);
 
-        SubCategoryEntity updated = subCategoryRepository.save(subCategoryEntity);
+        if (dto.getStatus() != null) {
+            subCategoryEntity.setStatus(dto.getStatus());
+        }
+
+        SubCategoryEntity updated =
+                subCategoryRepository.save(subCategoryEntity);
+
         return SubCategoryMapper.toDto(updated);
     }
 
@@ -161,80 +193,17 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 
         return new ApiResponse<>("SUCCESS", "Subcategories fetched successfully", response);
     }
-
-
-
-
-
-//        @Override
-//        public ApiResponse<List<ProductResponseDto>> getProductsBySubCategory(
-//                Long subCategoryId, int page, int size) {
-//
-//            Pageable pageable = PageRequest.of(page, size);
-//
-//            Page<ProductEntity> productPage =
-//                    productRepository.findBySubCategory_Id(subCategoryId, pageable);
-//
-//            List<ProductResponseDto> productList =
-//                    productPage.getContent()
-//                            .stream()
-//                            .map(product -> {
-//
-//                                ProductResponseDto dto = new ProductResponseDto();
-//
-//                                dto.setId(product.getId());
-//                                dto.setName(product.getProductName());
-//                                dto.setDescription(product.getProductDescription());
-//                                dto.setPrice(product.getPrice());
-//                                dto.setQuantity(product.getQuantity());
-//                                dto.setImageUrls(List.of(product.getImageUrl()));
-//
-//                                return dto;
-//                            })
-//                            .toList();
-//
-//            return new ApiResponse<>(
-//                    "SUCCESS",
-//                    "Products fetched successfully",
-//                    productList
-//            );
-//        }
-
-
     @Override
-    public ApiResponse<List<ProductResponseDto>> getProductsBySubCategory(
-            Long subCategoryId, int page, int size) {
+    public void softDeleteSubCategory(Long id) {
 
-        Pageable pageable = PageRequest.of(page, size);
+        SubCategoryEntity subCategory =
+                subCategoryRepository.findById(id)
+                        .orElseThrow(() ->
+                                new RuntimeException(
+                                        "SubCategory not found"));
 
-        Page<ProductEntity> productPage =
-                productRepository.findBySubCategory_Id(subCategoryId, pageable);
+        subCategory.setStatus(Status.INACTIVE);
 
-        List<ProductResponseDto> productList =
-                productPage.getContent()
-                        .stream()
-                        .map(product -> {
-
-                            ProductResponseDto dto = new ProductResponseDto();
-
-                            dto.setId(product.getId());
-                            dto.setName(product.getProductName());
-                            dto.setDescription(product.getProductDescription());
-                            dto.setPrice(product.getPrice());
-                            dto.setQuantity(product.getQuantity());
-
-                            // image mapping
-                            dto.setImageUrls(product.getImageUrl());
-
-                            return dto;
-                        })
-                        .toList();
-
-        return new ApiResponse<>(
-                "SUCCESS",
-                "Products fetched successfully",
-                productList
-        );
+        subCategoryRepository.save(subCategory);
     }
-    }
-
+}
