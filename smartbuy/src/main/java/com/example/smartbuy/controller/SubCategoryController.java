@@ -7,6 +7,7 @@ import com.example.smartbuy.enums.Status;
 import com.example.smartbuy.response.ApiResponse;
 import com.example.smartbuy.service.SubCategoryService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -87,13 +88,17 @@ public class SubCategoryController {
 
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('ADMIN','USER')")
-    public ResponseEntity<ApiResponse<List<SubCategoryResponseDto>>> getAllSubCategories() {
+    public ApiResponse<Page<SubCategoryResponseDto>> getAllSubCategories(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(defaultValue = "id") String sortBy
+    ) {
 
-        ApiResponse<List<SubCategoryResponseDto>> response =
-                subCategoryService.getAllSubCategories();
-
-        return ResponseEntity.ok(response);
+        return subCategoryService.getAllSubCategories(
+                page,
+                size,
+                sortBy
+        );
     }
 
 

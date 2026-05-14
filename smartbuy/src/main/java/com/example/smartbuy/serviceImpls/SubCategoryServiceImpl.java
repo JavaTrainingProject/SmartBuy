@@ -171,15 +171,26 @@ public class SubCategoryServiceImpl implements SubCategoryService {
     }
 
     @Override
-    public ApiResponse<List<SubCategoryResponseDto>> getAllSubCategories() {
-        List<SubCategoryEntity> list = subCategoryRepository.findAll();
+    public ApiResponse<Page<SubCategoryResponseDto>> getAllSubCategories(
+            int page,
+            int size,
+            String sortBy
+    ) {
 
-        List<SubCategoryResponseDto> response =
-                list.stream()
-                        .map(SubCategoryMapper::toDto)
-                        .toList();
+        Pageable pageable =
+                PageRequest.of(page, size, Sort.by(sortBy));
 
-        return new ApiResponse<>("SUCCESS", "Subcategories fetched successfully", response);
+        Page<SubCategoryEntity> entityPage =
+                subCategoryRepository.findAll(pageable);
+
+        Page<SubCategoryResponseDto> dtoPage =
+                entityPage.map(SubCategoryMapper::toDto);
+
+        return new ApiResponse<>(
+                "true",
+                "Subcategories fetched successfully",
+                dtoPage
+        );
     }
 
     @Override
