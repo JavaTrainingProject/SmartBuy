@@ -24,6 +24,11 @@ public class ProductEntity {
     private Double price;
     private Integer quantity;
 
+    private Integer stock;
+
+    @Column(name = "image_url")
+    private String imageUrl;
+
     public String getImageUrl() {
         return imageUrl;
     }
@@ -31,9 +36,6 @@ public class ProductEntity {
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
     }
-
-    @Column(name = "image_url")
-    private String imageUrl;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
@@ -92,4 +94,11 @@ public class ProductEntity {
 
     public void setCategory(CategoryEntity category) {this.category = category;}
 
+    public Integer getStock() {
+        return stock;
+    }
+
+    public void setStock(Integer stock) {
+        this.stock = stock;
+    }
 }
