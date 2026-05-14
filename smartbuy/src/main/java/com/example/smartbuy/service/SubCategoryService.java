@@ -4,6 +4,7 @@ import com.example.smartbuy.dtos.SubCategoryRequestDto;
 import com.example.smartbuy.dtos.SubCategoryResponseDto;
 import com.example.smartbuy.enums.Status;
 import com.example.smartbuy.response.ApiResponse;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -22,7 +23,11 @@ public interface SubCategoryService {
 
     SubCategoryResponseDto updateSubCategory(Long id, SubCategoryRequestDto dto);
 
-    ApiResponse<List<SubCategoryResponseDto>> getAllSubCategories();
+    ApiResponse<Page<SubCategoryResponseDto>> getAllSubCategories(
+            int page,
+            int size,
+            String sortBy
+    );
 
     ApiResponse<List<SubCategoryResponseDto>> getByStatus(Status status);
 
