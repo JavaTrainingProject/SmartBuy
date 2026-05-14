@@ -13,52 +13,45 @@ import java.util.List;
 @RequestMapping("/api/cart")
 public class CartController {
 
-        private final CartService cartService;
+    private final CartService cartService;
 
-        public CartController(CartService cartService) {
-            this.cartService = cartService;
-        }
+    public CartController(CartService cartService) {
+        this.cartService = cartService;
+    }
 
     @PostMapping("/add")
     @PreAuthorize("hasRole('USER')")
     public ApiResponse<CartResponseDto> addToCart(@RequestBody AddToCartRequestDto request) {
-
-        return new ApiResponse<>(
-                "SUCCESS",
-                "Added to cart",
-                cartService.addToCart(request)
-        );
+        return new ApiResponse<>("SUCCESS", "Added to cart", cartService.addToCart(request));
     }
 
-        @PreAuthorize("hasRole('USER')")
-        @GetMapping("/{userId}")
-        public ApiResponse<List<CartResponseDto>> getCart(@PathVariable Long userId) {
-
-            return new ApiResponse<>(
-                    "SUCCESS",
-                    "Cart fetched",
-                    cartService.getCart(userId)
-            );
-        }
-
-        @PreAuthorize("hasRole('USER')")
-        @DeleteMapping("/{cartId}")
-        public ApiResponse<String> remove(@PathVariable Long cartId) {
-
-            cartService.removeItem(cartId);
-
-            return new ApiResponse<>("SUCCESS", "Removed", null);
-        }
-
-        @PreAuthorize("hasRole('USER')")
-        @DeleteMapping("/clear/{userId}")
-        public ApiResponse<String> clear(@PathVariable Long userId) {
-
-            cartService.clearCart(userId);
-
-            return new ApiResponse<>("SUCCESS", "Cart cleared", null);
-        }
+    @GetMapping
+    @PreAuthorize("hasRole('USER')")
+    public ApiResponse<List<CartResponseDto>> getCart() {
+        return new ApiResponse<>("SUCCESS", "Cart fetched", cartService.getCart());
     }
 
+    @DeleteMapping("/{cartId}")
+    @PreAuthorize("hasRole('USER')")
+    public ApiResponse<String> remove(@PathVariable Long cartId) {
+        cartService.removeItem(cartId);
+        return new ApiResponse<>("SUCCESS", "Removed", null);
+    }
 
+    @DeleteMapping("/clear")
+    @PreAuthorize("hasRole('USER')")
+    public ApiResponse<String> clear() {
+        cartService.clearCart();
+        return new ApiResponse<>("SUCCESS", "Cart cleared", null);
+    }
 
+    @PutMapping("/{cartId}")
+    @PreAuthorize("hasRole('USER')")
+    public ApiResponse<CartResponseDto> updateQty(
+            @PathVariable Long cartId,
+            @RequestBody AddToCartRequestDto request) {
+
+        return new ApiResponse<>("SUCCESS", "Updated",
+                cartService.updateQuantity(cartId, request.getQuantity()));
+    }
+}

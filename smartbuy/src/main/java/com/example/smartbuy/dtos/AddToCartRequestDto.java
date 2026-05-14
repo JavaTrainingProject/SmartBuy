@@ -20,4 +20,5 @@ public class AddToCartRequestDto {
     public void setQuantity(Integer quantity) {
         this.quantity = quantity;
     }
+
 }

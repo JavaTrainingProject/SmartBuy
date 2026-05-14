@@ -9,6 +9,8 @@ public class OrderResponseDto {
     private Long userId;
     private Double totalAmount;
     private String status;
+    private String imageUrl;
+
     private List<OrderProduct> items;
 
     public Long getOrderId() {
@@ -49,5 +51,13 @@ public class OrderResponseDto {
 
     public void setItems(List<OrderProduct> items) {
         this.items = items;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }

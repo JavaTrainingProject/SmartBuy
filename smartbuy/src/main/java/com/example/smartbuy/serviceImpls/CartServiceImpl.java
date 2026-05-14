@@ -4,17 +4,16 @@ import com.example.smartbuy.dtos.AddToCartRequestDto;
 import com.example.smartbuy.dtos.CartResponseDto;
 import com.example.smartbuy.entity.CartProduct;
 import com.example.smartbuy.entity.ProductEntity;
-import com.example.smartbuy.entity.UserEntity;
-import com.example.smartbuy.exception.ResourceNotFoundException;
+import com.example.smartbuy.mapper.CartMapper;
 import com.example.smartbuy.repository.CartRepository;
 import com.example.smartbuy.repository.ProductRepository;
 import com.example.smartbuy.repository.UserRepository;
 import com.example.smartbuy.service.CartService;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class CartServiceImpl implements CartService {
@@ -31,27 +30,27 @@ public class CartServiceImpl implements CartService {
         this.userRepository = userRepository;
     }
 
+    private Long getCurrentUserId() {
+
+        var auth = SecurityContextHolder.getContext().getAuthentication();
+
+        if (auth == null || auth.getName() == null) {
+            throw new RuntimeException("User not authenticated");
+        }
+
+        String email = auth.getName();
+
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found: " + email))
+                .getId();
+    }
+
     @Override
     public CartResponseDto addToCart(AddToCartRequestDto request) {
 
-        Long userId = getLoggedInUserId();
-
+        Long userId = getCurrentUserId();
         ProductEntity product = productRepository.findById(request.getProductId())
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Product", "id", request.getProductId()));
-
-        if (product.getStatus() == null ||
-                !product.getStatus().name().equals("ACTIVE")) {
-            throw new RuntimeException("Product is not ACTIVE");
-        }
-
-        if (request.getQuantity() == null || request.getQuantity() <= 0) {
-            throw new RuntimeException("Invalid quantity");
-        }
-
-        if (product.getStock() == null || product.getStock() < request.getQuantity()) {
-            throw new RuntimeException("OUT_OF_STOCK");
-        }
+                .orElseThrow(() -> new RuntimeException("Product not found"));
 
         CartProduct cart = cartRepository
                 .findByUserIdAndProductId(userId, product.getId())
@@ -64,69 +63,65 @@ public class CartServiceImpl implements CartService {
             cart.setProductName(product.getProductName());
             cart.setPrice(product.getPrice());
             cart.setQuantity(request.getQuantity());
+            cart.setImageUrl(product.getImageUrl());
+
         } else {
-            int newQty = cart.getQuantity() + request.getQuantity();
-
-            if (newQty > product.getStock()) {
-                throw new RuntimeException("Quantity exceeds stock");
-            }
-
-            cart.setQuantity(newQty);
+            cart.setQuantity(cart.getQuantity() + request.getQuantity());
         }
 
-        CartProduct saved = cartRepository.save(cart);
+        CartProduct saved = cartRepository.save(cart); // IMPORTANT
 
-        return mapToDto(saved);
+        return CartMapper.toDto(saved);
     }
 
-
     @Override
-    public List<CartResponseDto> getCart(Long userId) {
+    public List<CartResponseDto> getCart() {
+        Long userId = getCurrentUserId();
 
         return cartRepository.findByUserId(userId)
                 .stream()
-                .map(this::mapToDto)
-                .collect(Collectors.toList());
+                .map(CartMapper::toDto)
+                .toList();
     }
-
 
     @Override
     public void removeItem(Long cartId) {
-        cartRepository.deleteById(cartId);
+        CartProduct cart = cartRepository.findById(cartId)
+                .orElseThrow(() -> new RuntimeException("Cart not found"));
+
+        if (!cart.getUserId().equals(getCurrentUserId())) {
+            throw new RuntimeException("Unauthorized");
+        }
+
+        cartRepository.delete(cart);
     }
 
     @Override
-    public void clearCart(Long userId) {
-        List<CartProduct> items = cartRepository.findByUserId(userId);
-        cartRepository.deleteAll(items);
+    public void clearCart() {
+        Long userId = getCurrentUserId();
+        cartRepository.deleteAll(cartRepository.findByUserId(userId));
     }
 
+    @Override
+    @Transactional
+    public CartResponseDto updateQuantity(Long cartId, Integer quantity) {
 
-    private CartResponseDto mapToDto(CartProduct cart) {
-
-        CartResponseDto dto = new CartResponseDto();
-        dto.setProductId(cart.getProductId());
-        dto.setProductName(cart.getProductName());
-        dto.setPrice(cart.getPrice());
-        dto.setQuantity(cart.getQuantity());
-        dto.setTotal(cart.getPrice() * cart.getQuantity());
-
-        return dto;
-    }
-
-    private Long getLoggedInUserId() {
-
-        Authentication authentication =
-                SecurityContextHolder.getContext().getAuthentication();
-
-        if (authentication == null || !authentication.isAuthenticated()) {
-            throw new RuntimeException("User not authenticated");
+        if (quantity == null || quantity <= 0) {
+            throw new RuntimeException("Invalid quantity");
         }
 
-        String username = authentication.getName();
+        CartProduct cart = cartRepository.findById(cartId)
+                .orElseThrow(() -> new RuntimeException("Cart not found"));
 
-        UserEntity user = userRepository.findByEmail(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        if (!cart.getUserId().equals(getCurrentUserId())) {
+            throw new RuntimeException("Unauthorized");
+        }
 
-        return user.getId();}
+        cart.setQuantity(quantity);
+
+
+        CartProduct updated = cartRepository.saveAndFlush(cart);
+
+        return CartMapper.toDto(updated);
+    }
 }

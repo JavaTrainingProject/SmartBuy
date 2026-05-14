@@ -1,6 +1,7 @@
 package com.example.smartbuy.entity;
 
 import com.example.smartbuy.enums.OrderStatus;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -17,8 +18,9 @@ public class Order {
 
         private Long userId;
         private Double totalAmount;
-        @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
-        private List<OrderProduct> items = new ArrayList<>();
+    private String address;
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<OrderProduct> items = new ArrayList<>();
 
         @Enumerated(EnumType.STRING)
         private OrderStatus status;
@@ -61,5 +63,13 @@ public class Order {
 
     public void setStatus(OrderStatus status) {
         this.status = status;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 }

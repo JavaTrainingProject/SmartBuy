@@ -2,11 +2,14 @@ package com.example.smartbuy.dtos;
 
 public class CartResponseDto {
 
+
+    private Long id;
     private Long productId;
     private String productName;
     private Double price;
     private Integer quantity;
     private Double total;
+    private String imageUrl;
 
     public Long getProductId() {
         return productId;
@@ -46,5 +49,21 @@ public class CartResponseDto {
 
     public void setTotal(Double total) {
         this.total = total;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }

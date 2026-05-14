@@ -1,24 +1,25 @@
 package com.example.smartbuy.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "order_items")
+@Table(name = "order_products")
 public class OrderProduct {
 
-        @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-        private Long productId;
-        private String productName;
-        private Double price;
-        private Integer quantity;
+    private Long productId;
+    private String productName;
+    private Double price;
+    private Integer quantity;
+    private String imageUrl;
 
     @ManyToOne
     @JoinColumn(name = "order_id")
-    @JsonIgnore
+    @JsonBackReference
     private Order order;
 
     public Long getId() {
@@ -67,5 +68,13 @@ public class OrderProduct {
 
     public void setOrder(Order order) {
         this.order = order;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }

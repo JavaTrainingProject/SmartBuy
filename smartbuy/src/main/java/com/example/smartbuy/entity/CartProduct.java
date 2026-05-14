@@ -16,6 +16,7 @@ public class CartProduct {
         private Double price;
         private Integer quantity;
         private Long userId;
+        private String imageUrl;
 
 
     public Long getId() {
@@ -64,6 +65,14 @@ public class CartProduct {
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }
 

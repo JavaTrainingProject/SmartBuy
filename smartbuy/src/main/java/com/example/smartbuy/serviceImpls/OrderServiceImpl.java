@@ -1,36 +1,53 @@
 package com.example.smartbuy.serviceImpls;
 
-import com.example.smartbuy.entity.CartProduct;
-import com.example.smartbuy.entity.Order;
-import com.example.smartbuy.entity.OrderProduct;
-import com.example.smartbuy.entity.ProductEntity;
+import com.example.smartbuy.dtos.OrderRequestDto;
+import com.example.smartbuy.dtos.OrderResponseDto;
+import com.example.smartbuy.entity.*;
 import com.example.smartbuy.enums.OrderStatus;
-import com.example.smartbuy.exception.ResourceNotFoundException;
-import com.example.smartbuy.repository.CartRepository;
-import com.example.smartbuy.repository.OrderRepository;
-import com.example.smartbuy.repository.ProductRepository;
+import com.example.smartbuy.mapper.OrderMapper;
+import com.example.smartbuy.repository.*;
 import com.example.smartbuy.response.ApiResponse;
 import com.example.smartbuy.service.OrderService;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+
 @Service
 public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
     private final CartRepository cartRepository;
-    private final ProductRepository productRepository;
+    private final UserRepository userRepository;
 
     public OrderServiceImpl(OrderRepository orderRepository,
                             CartRepository cartRepository,
-                            ProductRepository productRepository) {
+                            UserRepository userRepository) {
+
         this.orderRepository = orderRepository;
         this.cartRepository = cartRepository;
-        this.productRepository = productRepository;
+        this.userRepository = userRepository;
     }
 
+    private Long getCurrentUserId() {
+
+        String email = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
+
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"))
+                .getId();
+    }
+
+
     @Override
-    public void placeOrder(Long userId) {
+    @Transactional
+    public OrderResponseDto placeOrder(OrderRequestDto request) {
+
+        Long userId = getCurrentUserId();
 
         List<CartProduct> cartItems = cartRepository.findByUserId(userId);
 
@@ -38,66 +55,58 @@ public class OrderServiceImpl implements OrderService {
             throw new RuntimeException("Cart is empty");
         }
 
+
         Order order = new Order();
         order.setUserId(userId);
         order.setStatus(OrderStatus.CONFIRMED);
+        order.setAddress(request.getAddress());
 
-        List<OrderProduct> orderProducts = cartItems.stream().map(cart -> {
+        List<OrderProduct> items = new ArrayList<>();
 
-            ProductEntity product = getProduct(cart.getProductId());
-
-            if (product.getStock() == null || product.getStock() <= 0) {
-                throw new RuntimeException("OUT_OF_STOCK: " + product.getProductName());
-            }
-
-            if (cart.getQuantity() > product.getStock()) {
-                throw new RuntimeException("Quantity exceeds stock");
-            }
-
-            product.setStock(product.getStock() - cart.getQuantity());
-            productRepository.save(product);
+        for (CartProduct cart : cartItems) {
 
             OrderProduct op = new OrderProduct();
             op.setProductId(cart.getProductId());
             op.setProductName(cart.getProductName());
             op.setPrice(cart.getPrice());
             op.setQuantity(cart.getQuantity());
+            op.setImageUrl(cart.getImageUrl());
+
 
             op.setOrder(order);
 
-            return op;
+            items.add(op);
+        }
 
-        }).toList();
+        order.setItems(items);
 
-        order.setItems(orderProducts);
-
-        double total = orderProducts.stream()
+        double total = items.stream()
                 .mapToDouble(i -> i.getPrice() * i.getQuantity())
                 .sum();
 
         order.setTotalAmount(total);
 
-        orderRepository.save(order);
+
+        Order savedOrder = orderRepository.saveAndFlush(order);
+
 
         cartRepository.deleteAll(cartItems);
+
+
+        return OrderMapper.toDto(savedOrder);
     }
+
 
     @Override
-    public ApiResponse<List<Order>> getOrders(Long userId) {
+    public ApiResponse<List<OrderResponseDto>> getOrders() {
 
-        List<Order> orders = orderRepository.findByUserId(userId);
+        Long userId = getCurrentUserId();
 
-        return new ApiResponse<>(
-                "SUCCESS",
-                "Orders fetched",
-                orders
-        );
-    }
+        List<OrderResponseDto> list = orderRepository.findByUserId(userId)
+                .stream()
+                .map(OrderMapper::toDto)
+                .toList();
 
-    private ProductEntity getProduct(Long productId) {
-        return productRepository.findById(productId)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Product", "id", productId)
-                );
+        return new ApiResponse<>("SUCCESS", "Orders fetched", list);
     }
 }

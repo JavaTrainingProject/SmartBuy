@@ -1,14 +1,19 @@
 package com.example.smartbuy.mapper;
 
+import com.example.smartbuy.dtos.OrderResponseDto;
 import com.example.smartbuy.entity.Order;
 
 public class OrderMapper {
 
-    public static Order createOrder(Long userId) {
+    public static OrderResponseDto toDto(Order order) {
 
-        Order order = new Order();
-        order.setUserId(userId);
+        OrderResponseDto dto = new OrderResponseDto();
+        dto.setOrderId(order.getId());
+        dto.setUserId(order.getUserId());
+        dto.setTotalAmount(order.getTotalAmount());
+        dto.setStatus(order.getStatus().name());
+        dto.setItems(order.getItems());
 
-        return order;
+        return dto;
     }
 }

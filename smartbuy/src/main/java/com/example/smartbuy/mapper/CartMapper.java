@@ -5,26 +5,18 @@ import com.example.smartbuy.entity.CartProduct;
 
 public class CartMapper {
 
-    public static CartResponseDto toDto(CartProduct item) {
+    public static CartResponseDto toDto(CartProduct cart) {
 
-        if (item == null) {
-            return null;
-        }
+        if (cart == null) return null;
 
         CartResponseDto dto = new CartResponseDto();
-
-        dto.setProductId(item.getProductId());
-        dto.setProductName(item.getProductName());
-        dto.setPrice(item.getPrice());
-        dto.setQuantity(item.getQuantity());
-
-        double total = 0.0;
-
-        if (item.getPrice() != null && item.getQuantity() != null) {
-            total = item.getPrice() * item.getQuantity();
-        }
-
-        dto.setTotal(total);
+        dto.setId(cart.getId());
+        dto.setProductId(cart.getProductId());
+        dto.setProductName(cart.getProductName());
+        dto.setPrice(cart.getPrice());
+        dto.setQuantity(cart.getQuantity());
+        dto.setTotal(cart.getPrice() * cart.getQuantity());
+        dto.setImageUrl(cart.getImageUrl());
 
         return dto;
     }
