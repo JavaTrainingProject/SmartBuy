@@ -1,6 +1,7 @@
 package com.example.smartbuy.dtos;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class ProductResponseDto {
     private Long id;
@@ -13,6 +14,16 @@ public class ProductResponseDto {
     private String subCategoryName;
 
     private Integer stock;
+
+    private List<String> images;
+
+    public List<String> getImages() {
+        return images;
+    }
+
+    public void setImages(List<String> images) {
+        this.images = images;
+    }
 
     public Integer getStock() {
         return stock;

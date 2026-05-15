@@ -149,28 +149,11 @@ public class ProductController {
     public ResponseEntity<
             ApiResponse<List<ProductResponseDto>>
             > getProductsByCategory(
+                    @PathVariable String categoryName) {
 
-            @PathVariable
-            String categoryName
-    ) {
+        List<ProductResponseDto> response = productService.getProductsByCategory(categoryName);
 
-        List<ProductResponseDto> response =
-                productService
-                        .getProductsByCategory(
-                                categoryName
-                        );
-
-        return ResponseEntity.ok(
-
-                new ApiResponse<>(
-
-                        "SUCCESS",
-
-                        "Category products fetched successfully",
-
-                        response
-                )
-        );
+        return ResponseEntity.ok(new ApiResponse<>("SUCCESS", "Category products fetched successfully", response));
     }
 
 
