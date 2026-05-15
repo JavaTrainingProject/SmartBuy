@@ -17,7 +17,7 @@ public class SubCategoryEntity {
     @Enumerated(EnumType.STRING)
     @Column(name ="subCategory_status")
     private Status status;
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
     private CategoryEntity category;
     @OneToMany(mappedBy = "subCategory")

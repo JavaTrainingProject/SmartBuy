@@ -77,7 +77,7 @@ public class CategoryController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size,
             @RequestParam(defaultValue = "id") String sortBy,
-            @RequestParam(defaultValue = "asc") String direction
+            @RequestParam(defaultValue = "dec") String direction
     ) {
         return categoryService.getAllCategories(page, size, sortBy, direction);
     }

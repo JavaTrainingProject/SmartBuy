@@ -90,15 +90,21 @@ public class SubCategoryController {
 
     @GetMapping
     public ApiResponse<Page<SubCategoryResponseDto>> getAllSubCategories(
+
             @RequestParam(defaultValue = "0") int page,
+
             @RequestParam(defaultValue = "5") int size,
-            @RequestParam(defaultValue = "id") String sortBy
+
+            @RequestParam(defaultValue = "id") String sortBy,
+
+            @RequestParam(defaultValue = "des") String direction
     ) {
 
         return subCategoryService.getAllSubCategories(
                 page,
                 size,
-                sortBy
+                sortBy,
+                direction
         );
     }
 
