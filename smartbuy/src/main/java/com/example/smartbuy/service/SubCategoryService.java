@@ -26,7 +26,8 @@ public interface SubCategoryService {
     ApiResponse<Page<SubCategoryResponseDto>> getAllSubCategories(
             int page,
             int size,
-            String sortBy
+            String sortBy,
+            String direction
     );
 
     ApiResponse<List<SubCategoryResponseDto>> getByStatus(Status status);
