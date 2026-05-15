@@ -36,8 +36,15 @@ public class SubCategoryServiceImpl implements SubCategoryService {
         CategoryEntity category = categoryRepository.findById(dto.getCategoryId())
                 .orElseThrow(() -> new RuntimeException("Category not found"));
 
-        if (subCategoryRepository.existsBySubCategoryNameIgnoreCase(dto.getSubCategoryName())) {
-            throw new RuntimeException("SubCategory already exists");
+        if (subCategoryRepository
+                .existsBySubCategoryNameIgnoreCaseAndCategory_Id(
+                        dto.getSubCategoryName(),
+                        dto.getCategoryId()
+                )) {
+
+            throw new RuntimeException(
+                    "SubCategory already exists in this category"
+            );
         }
 
         SubCategoryEntity entity = SubCategoryMapper.toEntity(dto);

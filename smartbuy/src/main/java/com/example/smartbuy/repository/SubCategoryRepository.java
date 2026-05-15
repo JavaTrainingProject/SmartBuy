@@ -10,7 +10,10 @@ import java.util.List;
 
 public interface SubCategoryRepository extends JpaRepository<SubCategoryEntity, Long> {
 
-    boolean existsBySubCategoryNameIgnoreCase(String subCategoryName);
+    boolean existsBySubCategoryNameIgnoreCaseAndCategory_Id(
+            String subCategoryName,
+            Long categoryId
+    );
 
     boolean existsBySubCategoryNameIgnoreCaseAndIdNot(
             String subCategoryName,
