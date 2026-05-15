@@ -1,5 +1,6 @@
 package com.example.smartbuy.controller;
 
+import com.example.smartbuy.dtos.ProductPageRespnseDto;
 import com.example.smartbuy.response.ApiResponse;
 import com.example.smartbuy.dtos.ProductRequestDto;
 import com.example.smartbuy.dtos.ProductResponseDto;
@@ -32,10 +33,10 @@ public class ProductController {
     }
 
     @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<ProductResponseDto>> createProduct(
             @RequestParam("product") String productJson,
-            @RequestParam(value = "images", required = false) MultipartFile images) throws Exception {
+            @RequestParam(value = "images", required = false) List<MultipartFile> images
+    ) throws Exception {
 
         ProductRequestDto dto =
                 objectMapper.readValue(productJson, ProductRequestDto.class);
@@ -43,7 +44,9 @@ public class ProductController {
         ProductResponseDto response =
                 productService.createProduct(dto, images);
 
-        return ResponseEntity.ok(new ApiResponse<>("SUCCESS", "Product created successfully", response));
+        return ResponseEntity.ok(
+                new ApiResponse<>("SUCCESS", "Product created successfully", response)
+        );
     }
 
 
@@ -53,14 +56,19 @@ public class ProductController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
 
-        Page<ProductResponseDto> response = productService.getAllProducts(page, size);
+        Page<ProductResponseDto> response =
+                productService.getAllProducts(page, size);
 
-        return ResponseEntity.ok(new ApiResponse<>("SUCCESS", "Products fetched successfully", response));
+        return ResponseEntity.ok(
+                new ApiResponse<>("SUCCESS",
+                        "Products fetched successfully",
+                        response)
+        );
     }
 
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN','USER')")
+   @PreAuthorize("hasAnyRole('ADMIN','USER')")
     public ResponseEntity<ApiResponse<ProductResponseDto>> getProductById(@PathVariable Long id) {
 
         ProductResponseDto response = productService.getProductById(id);
@@ -74,7 +82,7 @@ public class ProductController {
     public ResponseEntity<ApiResponse<ProductResponseDto>> updateProduct(
             @PathVariable Long id,
             @RequestParam("product") String productJson,
-            @RequestParam(value = "images", required = false) MultipartFile images) throws Exception {
+            @RequestParam(value = "images", required = false) List<MultipartFile> images) throws Exception {
 
         ProductRequestDto dto =
                 objectMapper.readValue(productJson, ProductRequestDto.class);
@@ -109,7 +117,7 @@ public class ProductController {
         );
     }
 
-//sub categories
+
     @GetMapping("/status")
     @PreAuthorize("hasAnyRole('ADMIN','USER')")
     public ResponseEntity<ApiResponse<List<ProductResponseDto>>> getProductsByStatus(
@@ -123,6 +131,37 @@ public class ProductController {
         );
     }
 
+    @GetMapping("/subcategory/{subCategoryId}")
+    public ResponseEntity<ApiResponse<ProductPageRespnseDto>> getProductsBySubCategory(
+            @PathVariable Long subCategoryId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        ApiResponse<ProductPageRespnseDto> response =
+                productService.getProductsBySubCategory(subCategoryId, page, size);
+
+        return ResponseEntity.ok(response);
+    }
+
+
+    @GetMapping("/category/{categoryName}")
+
+    public ResponseEntity<
+            ApiResponse<List<ProductResponseDto>>
+            > getProductsByCategory(
+                    @PathVariable String categoryName) {
+
+        List<ProductResponseDto> response = productService.getProductsByCategory(categoryName);
+
+        return ResponseEntity.ok(new ApiResponse<>("SUCCESS", "Category products fetched successfully", response));
+    }
+
+
+    @GetMapping("/getall-product")
+    public ResponseEntity<?> getAllProductByName(@RequestParam String productName) {
+          var productList =   productService.getAllProductByName(productName);
+          return ResponseEntity.ok(productList);
+    }
 }
 
 

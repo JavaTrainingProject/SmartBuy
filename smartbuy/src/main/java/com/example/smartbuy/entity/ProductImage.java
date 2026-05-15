@@ -19,9 +19,17 @@ public class ProductImage {
 
     public void setId(long id) { this.id = id; }
 
-    public String getImageUrl() { return imageUrl; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 
     public ProductEntity getProduct() { return product; }
 

@@ -22,8 +22,7 @@ public class CategoryController {
     }
 
 
-    @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping@PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.CREATED)
     public CategoryResponseDto create(@RequestBody CategoryRequestDto dto) {
         return categoryService.createCategory(dto);
@@ -36,7 +35,7 @@ public class CategoryController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+   @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<CategoryResponseDto> update(@PathVariable Long id,
                                                    @RequestBody CategoryRequestDto dto) {
         return categoryService.updateCategory(id, dto);
@@ -50,7 +49,7 @@ public class CategoryController {
 
 
     @GetMapping("/active")
-    @PreAuthorize("hasAnyRole('ADMIN','USER')")
+   @PreAuthorize("hasAnyRole('ADMIN','USER')")
     public ApiResponse<?> getActive(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size,
@@ -68,7 +67,7 @@ public class CategoryController {
     }
 
     @GetMapping("/count")
-    @PreAuthorize("hasAnyRole('ADMIN','USER')")
+   @PreAuthorize("hasAnyRole('ADMIN','USER')")
     public ResponseEntity<Long> getActiveCategoryCount() {
         return ResponseEntity.ok(categoryService.getActiveCategoryCount());
     }

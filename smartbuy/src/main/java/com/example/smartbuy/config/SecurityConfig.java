@@ -4,7 +4,6 @@ package com.example.smartbuy.config;
 import com.example.smartbuy.security.JWTFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -20,50 +19,44 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    private final JWTFilter jwtFilter;
 
-    public SecurityConfig(JWTFilter jwtFilter){
-        this.jwtFilter=jwtFilter;
+        private final JWTFilter jwtFilter;
+
+        public SecurityConfig(JWTFilter jwtFilter) {
+            this.jwtFilter = jwtFilter;
+        }
+
+        @Bean
+        public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+            http
+                    .csrf(csrf -> csrf.disable())
+                    .cors(cors -> {})
+                    .authorizeHttpRequests(auth -> auth
+                            .requestMatchers("/api/auth/**").permitAll()
+                            .requestMatchers("/products/**").permitAll()
+                            .requestMatchers("/api/admin/**").hasAnyRole("ADMIN","USER")
+                            .anyRequest().permitAll()
+                    );
+
+            http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+
+            return http.build();
+        }
+
+        @Bean
+        public PasswordEncoder passwordEncoder() {
+            return new BCryptPasswordEncoder();
+        }
+
+        @Bean
+        public AuthenticationManager authenticationManager(
+                UserDetailsService userDetailsService,
+                PasswordEncoder passwordEncoder) {
+
+            DaoAuthenticationProvider dao = new DaoAuthenticationProvider();
+            dao.setUserDetailsService(userDetailsService);
+            dao.setPasswordEncoder(passwordEncoder);
+
+            return new ProviderManager(dao);
+        }
     }
-
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
-        http
-                .csrf(csrf -> csrf.disable())
-                .cors(cors ->{})
-                .authorizeHttpRequests(auth ->auth
-                        .requestMatchers("/api/auth/**").permitAll()
-                     .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/api/user/**").hasRole("USER")
-                        .requestMatchers("/api/categories/**").permitAll()
-                        .requestMatchers("/api/subcategory/**").permitAll()
-                        .requestMatchers("/api/admin/categories/active").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/products/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/products/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/api/products/**").hasRole("ADMIN")
-                        .requestMatchers("/api/products/**").hasAnyRole("ADMIN","USER")
-                    .anyRequest().authenticated()
-
-                );
-        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-        return http.build();
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder();
-    }
-
-
-    @Bean
-    public AuthenticationManager authenticationManager(UserDetailsService userDetailsService, PasswordEncoder passwordEncoder){
-        DaoAuthenticationProvider daoAuthenticationProvider=new DaoAuthenticationProvider();
-        daoAuthenticationProvider.setUserDetailsService(userDetailsService);
-        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder);
-        return new ProviderManager(daoAuthenticationProvider);
-    }
-
-}
-
-
-
