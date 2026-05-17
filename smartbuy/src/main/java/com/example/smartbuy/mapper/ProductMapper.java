@@ -17,8 +17,26 @@ public class ProductMapper {
             dto.setImageUrls(entity.getImageUrl());
             dto.setCreatedAt(entity.getCreatedAt());
 
+            if (
+                    entity.getCategory() != null
+            ) {
+
+                dto.setCategoryId(
+                        entity.getCategory().getId()
+                );
+
+                dto.setCategoryName(
+                        entity.getCategory().getCategoryName()
+                );
+            }
+
+
             if (entity.getSubCategory() != null) {
                 dto.setSubCategoryName(entity.getSubCategory().getSubCategoryName());
+
+                dto.setSubCategoryId(
+                        entity.getSubCategory().getId()
+                );
 
                 if (entity.getSubCategory().getCategory() != null) {
                     dto.setCategoryName(
