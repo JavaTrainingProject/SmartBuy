@@ -9,13 +9,21 @@ public class ProductResponseDto {
     private String description;
     private Double price;
     private Integer quantity;
-    private String imageUrls;
+
     private String categoryName;
     private String subCategoryName;
-    private Long categoryId;
-    private Long subCategoryId;
 
     private Integer stock;
+
+    private List<String> images;
+
+    public List<String> getImages() {
+        return images;
+    }
+
+    public void setImages(List<String> images) {
+        this.images = images;
+    }
 
     public Integer getStock() {
         return stock;
@@ -26,6 +34,16 @@ public class ProductResponseDto {
     }
 
     private LocalDateTime createdAt;
+
+    private String imageUrl;
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 
     public String getName() {
         return name;
@@ -91,23 +109,4 @@ public class ProductResponseDto {
         this.createdAt = createdAt;
     }
 
-    public String getImageUrls() { return imageUrls; }
-
-    public void setImageUrls(String imageUrls) { this.imageUrls = imageUrls; }
-
-    public Long getCategoryId() {
-        return categoryId;
-    }
-
-    public void setCategoryId(Long categoryId) {
-        this.categoryId = categoryId;
-    }
-
-    public Long getSubCategoryId() {
-        return subCategoryId;
-    }
-
-    public void setSubCategoryId(Long subCategoryId) {
-        this.subCategoryId = subCategoryId;
-    }
 }

@@ -206,7 +206,7 @@ public class CategoryServiceImpl implements CategoryService {
             String sortBy,
             String direction
     ) {
-        Sort sort = direction.equalsIgnoreCase("asc")
+        Sort sort = direction.equalsIgnoreCase("des")
                 ? Sort.by(sortBy).ascending()
                 : Sort.by(sortBy).descending();
 
