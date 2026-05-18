@@ -17,13 +17,19 @@ public class Order {
         private Long id;
 
         private Long userId;
-        private Double totalAmount;
-    private String address;
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<OrderProduct> items = new ArrayList<>();
 
-        @Enumerated(EnumType.STRING)
-        private OrderStatus status;
+        private Double totalAmount;
+
+        private String address;
+
+       @Enumerated(EnumType.STRING)
+    private OrderStatus status;
+
+    @JsonManagedReference
+    @OneToMany(mappedBy = "order",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
+    private List<OrderProduct> items = new ArrayList<>();
 
     public Long getId() {
         return id;

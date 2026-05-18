@@ -6,10 +6,13 @@ public class CartResponseDto {
     private Long id;
     private Long productId;
     private String productName;
+    private String subCategoryName;
     private Double price;
     private Integer quantity;
     private Double total;
     private String imageUrl;
+    private String productDescription;
+
 
     public Long getProductId() {
         return productId;
@@ -65,5 +68,21 @@ public class CartResponseDto {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public String getSubCategoryName() {
+        return subCategoryName;
+    }
+
+    public void setSubCategoryName(String subCategoryName) {
+        this.subCategoryName = subCategoryName;
+    }
+
+    public String getProductDescription() {
+        return productDescription;
+    }
+
+    public void setProductDescription(String productDescription) {
+        this.productDescription = productDescription;
     }
 }

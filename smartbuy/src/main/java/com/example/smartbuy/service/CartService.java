@@ -1,4 +1,3 @@
-
 package com.example.smartbuy.service;
 
 import com.example.smartbuy.dtos.AddToCartRequestDto;
@@ -14,7 +13,7 @@ public interface CartService {
 
     void removeItem(Long cartId);
 
-    CartResponseDto updateQuantity(Long cartId, Integer quantity);
-
     void clearCart();
+
+    CartResponseDto updateQuantity(Long cartId, Integer quantity);
 }

@@ -20,6 +20,7 @@ public class OrderController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('USER')")
     public ApiResponse<OrderResponseDto> placeOrder(@RequestBody OrderRequestDto request) {
         return new ApiResponse<>("SUCCESS",
                 "Order placed successfully",
