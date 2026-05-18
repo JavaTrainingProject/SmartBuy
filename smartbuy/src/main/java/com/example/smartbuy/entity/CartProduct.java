@@ -17,6 +17,8 @@ public class CartProduct {
         private Integer quantity;
         private Long userId;
         private String imageUrl;
+        private String productDescription;
+    private String subCategoryName;
 
 
     public Long getId() {
@@ -73,6 +75,22 @@ public class CartProduct {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public String getProductDescription() {
+        return productDescription;
+    }
+
+    public void setProductDescription(String productDescription) {
+        this.productDescription = productDescription;
+    }
+
+    public String getSubCategoryName() {
+        return subCategoryName;
+    }
+
+    public void setSubCategoryName(String subCategoryName) {
+        this.subCategoryName = subCategoryName;
     }
 }
 

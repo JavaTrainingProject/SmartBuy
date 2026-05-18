@@ -13,10 +13,14 @@ public class CartMapper {
         dto.setId(cart.getId());
         dto.setProductId(cart.getProductId());
         dto.setProductName(cart.getProductName());
+        dto.setSubCategoryName(cart.getSubCategoryName());
         dto.setPrice(cart.getPrice());
         dto.setQuantity(cart.getQuantity());
         dto.setTotal(cart.getPrice() * cart.getQuantity());
         dto.setImageUrl(cart.getImageUrl());
+        dto.setProductDescription(
+                cart.getProductDescription()
+        );
 
         return dto;
     }
