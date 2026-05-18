@@ -4,6 +4,7 @@ import com.example.smartbuy.dtos.ProductPageRespnseDto;
 import com.example.smartbuy.dtos.ProductRequestDto;
 import com.example.smartbuy.dtos.ProductResponseDto;
 import com.example.smartbuy.entity.ProductEntity;
+import com.example.smartbuy.enums.ProductStatus;
 import com.example.smartbuy.response.ApiResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,7 +24,7 @@ public interface ProductService {
 
     String deleteProduct(Long productId);
 
-    String updateProductStatus(Long id, String status);
+    String updateProductStatus(Long id, ProductStatus status);
 
     List<ProductResponseDto> getProductsByStatus(String status);
 

@@ -68,7 +68,7 @@ public class ProductEntity {
     private CategoryEntity category;
 
     @Enumerated(EnumType.STRING)
-    private ProductStatus status=ProductStatus.ACTIVE;
+    private ProductStatus status;
 
     public ProductStatus getStatus() {return status;}
 

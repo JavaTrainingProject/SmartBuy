@@ -1,6 +1,7 @@
 package com.example.smartbuy.controller;
 
 import com.example.smartbuy.dtos.ProductPageRespnseDto;
+import com.example.smartbuy.enums.ProductStatus;
 import com.example.smartbuy.response.ApiResponse;
 import com.example.smartbuy.dtos.ProductRequestDto;
 import com.example.smartbuy.dtos.ProductResponseDto;
@@ -94,13 +95,20 @@ public class ProductController {
     }
 
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{id}/status")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<String>> deleteProduct(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<String>> deleteProduct(
+            @PathVariable Long id) {
 
-        String message = productService.deleteProduct(id);
+        String response = productService.deleteProduct(id);
 
-        return ResponseEntity.ok(new ApiResponse<>("SUCCESS", message, null));
+        return ResponseEntity.ok(
+                new ApiResponse<>(
+                        "SUCCESS",
+                        "Product deactivated successfully",
+                        response
+                )
+        );
     }
 
 
@@ -108,7 +116,7 @@ public class ProductController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<String>> updateStatus(
             @PathVariable Long id,
-            @RequestParam String status) {
+            @RequestParam ProductStatus status) {
 
         String response = productService.updateProductStatus(id, status);
 

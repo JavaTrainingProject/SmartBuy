@@ -57,9 +57,6 @@ public class ProductMapper {
                 );
             }
 
-
-            /* MULTIPLE IMAGES */
-            /* MULTIPLE IMAGES */
             if (entity.getProductImages() != null &&
                     !entity.getProductImages().isEmpty()) {
 
@@ -73,7 +70,7 @@ public class ProductMapper {
                 );
             }
 
-            /* SUBCATEGORY */
+
             if (entity.getSubCategory() != null) {
 
                 dto.setSubCategoryName(
@@ -82,7 +79,6 @@ public class ProductMapper {
                                 .getSubCategoryName()
                 );
 
-                /* CATEGORY */
                 if (entity.getSubCategory()
                         .getCategory() != null) {
 
