@@ -82,9 +82,21 @@ public class ProductServiceImpl implements ProductService {
 
             product.setSubCategory(subCategory);
 
+
             product.setStatus(ProductStatus.ACTIVE);
 
-            ProductEntity savedProduct = productRepository.save(product);
+
+            if (images != null && !images.isEmpty()) {
+
+                String thumbnail =
+                        uploadImage(images.get(0));
+
+                product.setImageUrl(thumbnail);
+            }
+
+            ProductEntity savedProduct =
+                    productRepository.save(product);
+
 
             if (images != null && !images.isEmpty()) {
 

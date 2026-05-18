@@ -10,7 +10,6 @@ public class OrderProduct {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private Long productId;
     private String productName;
     private String subCategoryName;

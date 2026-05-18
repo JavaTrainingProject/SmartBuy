@@ -31,7 +31,7 @@ public class ProductEntity {
     @OneToMany(mappedBy="product", cascade=CascadeType.ALL, fetch=FetchType.LAZY)
     private List<ProductImage> productImages;
 
-    @OneToMany(mappedBy = "prduct", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     public List<ProductImage> getProductImages() {
         return productImages;
     }
