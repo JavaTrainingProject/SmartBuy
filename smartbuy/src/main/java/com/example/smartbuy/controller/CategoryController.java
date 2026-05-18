@@ -50,7 +50,7 @@ public class CategoryController {
 
 
     @GetMapping("/active")
-    @PreAuthorize("hasAnyRole('ADMIN','USER')")
+
     public ApiResponse<?> getActive(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size,
