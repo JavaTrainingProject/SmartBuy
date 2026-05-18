@@ -453,7 +453,7 @@ public class ProductServiceImpl implements ProductService {
                     product.getStock()
             );
 
-            dto.setImageUrl(
+            dto.setImageUrls(
                     product.getImageUrl()
             );
 

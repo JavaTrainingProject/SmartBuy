@@ -295,7 +295,7 @@ public class SubCategoryServiceImpl implements SubCategoryService {
                                         product.getQuantity()
                                 );
 
-                                dto.setImageUrl(
+                                dto.setImageUrls(
                                         product.getImageUrl()
                                 );
 

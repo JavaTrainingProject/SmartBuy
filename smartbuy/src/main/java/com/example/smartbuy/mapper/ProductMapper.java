@@ -35,7 +35,7 @@ public class ProductMapper {
                     entity.getStock()
             );
 
-            dto.setImageUrl(
+            dto.setImageUrls(
                     entity.getImageUrl()
             );
 
@@ -43,16 +43,33 @@ public class ProductMapper {
                     entity.getCreatedAt()
             );
 
+
+            if (
+                    entity.getCategory() != null
+            ) {
+
+                dto.setCategoryId(
+                        entity.getCategory().getId()
+                );
+
+                dto.setCategoryName(
+                        entity.getCategory().getCategoryName()
+                );
+            }
+
+
+            /* MULTIPLE IMAGES */
             /* MULTIPLE IMAGES */
             if (entity.getProductImages() != null &&
                     !entity.getProductImages().isEmpty()) {
 
-                dto.setImages(
+                dto.setImageUrls(
 
                         entity.getProductImages()
                                 .stream()
                                 .map(ProductImage::getImageUrl)
-                                .toList()
+                                .findFirst()
+                                .orElse(null)
                 );
             }
 
