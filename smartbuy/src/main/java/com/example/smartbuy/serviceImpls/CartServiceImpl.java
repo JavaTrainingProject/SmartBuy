@@ -9,6 +9,7 @@ import com.example.smartbuy.repository.CartRepository;
 import com.example.smartbuy.repository.ProductRepository;
 import com.example.smartbuy.repository.UserRepository;
 import com.example.smartbuy.service.CartService;
+
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,9 +23,11 @@ public class CartServiceImpl implements CartService {
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
 
-    public CartServiceImpl(CartRepository cartRepository,
-                           ProductRepository productRepository,
-                           UserRepository userRepository) {
+    public CartServiceImpl(
+            CartRepository cartRepository,
+            ProductRepository productRepository,
+            UserRepository userRepository
+    ) {
         this.cartRepository = cartRepository;
         this.productRepository = productRepository;
         this.userRepository = userRepository;
@@ -32,7 +35,9 @@ public class CartServiceImpl implements CartService {
 
     private Long getCurrentUserId() {
 
-        var auth = SecurityContextHolder.getContext().getAuthentication();
+        var auth = SecurityContextHolder
+                .getContext()
+                .getAuthentication();
 
         if (auth == null || auth.getName() == null) {
             throw new RuntimeException("User not authenticated");
@@ -41,44 +46,108 @@ public class CartServiceImpl implements CartService {
         String email = auth.getName();
 
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found: " + email))
+                .orElseThrow(() ->
+                        new RuntimeException("User not found"))
                 .getId();
     }
 
     @Override
     public CartResponseDto addToCart(AddToCartRequestDto request) {
 
+        if (request.getProductId() == null) {
+            throw new RuntimeException("Product id is required");
+        }
+
+        if (request.getQuantity() == null ||
+                request.getQuantity() <= 0) {
+
+            throw new RuntimeException(
+                    "Quantity must be greater than 0"
+            );
+        }
+
         Long userId = getCurrentUserId();
-        ProductEntity product = productRepository.findById(request.getProductId())
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+
+        ProductEntity product = productRepository
+                .findById(request.getProductId())
+                .orElseThrow(() ->
+                        new RuntimeException("Product not found"));
+
+        if (product.getStock() <= 0) {
+
+            throw new RuntimeException(
+                    product.getProductName()
+                            + " is out of stock"
+            );
+        }
 
         CartProduct cart = cartRepository
-                .findByUserIdAndProductId(userId, product.getId())
+                .findByUserIdAndProductId(
+                        userId,
+                        request.getProductId()
+                )
                 .orElse(null);
 
+        int existingQuantity =
+                cart == null ? 0 : cart.getQuantity();
+
+        int finalQuantity =
+                existingQuantity + request.getQuantity();
+
+        if (finalQuantity > product.getStock()) {
+
+            throw new RuntimeException(
+                    "Only "
+                            + product.getStock()
+                            + " items available in stock"
+            );
+        }
+
         if (cart == null) {
+
             cart = new CartProduct();
+
             cart.setUserId(userId);
+
             cart.setProductId(product.getId());
-            cart.setProductName(product.getProductName());
+
+            cart.setProductName(
+                    product.getProductName()
+            );
+
+            cart.setSubCategoryName(
+                    product.getSubCategory()
+                            .getSubCategoryName()
+            );
+
+            cart.setProductDescription(
+                    product.getProductDescription()
+            );
+
             cart.setPrice(product.getPrice());
+
             cart.setQuantity(request.getQuantity());
+
             cart.setImageUrl(product.getImageUrl());
 
         } else {
-            cart.setQuantity(cart.getQuantity() + request.getQuantity());
+
+            cart.setQuantity(finalQuantity);
         }
 
-        CartProduct saved = cartRepository.save(cart); // IMPORTANT
+        CartProduct saved =
+                cartRepository.save(cart);
 
         return CartMapper.toDto(saved);
     }
 
     @Override
     public List<CartResponseDto> getCart() {
+
         Long userId = getCurrentUserId();
 
-        return cartRepository.findByUserId(userId)
+        return cartRepository.
+                findByUserId(userId)
                 .stream()
                 .map(CartMapper::toDto)
                 .toList();
@@ -86,11 +155,20 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public void removeItem(Long cartId) {
-        CartProduct cart = cartRepository.findById(cartId)
-                .orElseThrow(() -> new RuntimeException("Cart not found"));
 
-        if (!cart.getUserId().equals(getCurrentUserId())) {
-            throw new RuntimeException("Unauthorized");
+        CartProduct cart = cartRepository
+                .findById(cartId)
+                .orElseThrow(() ->
+                        new RuntimeException(
+                                "Cart item not found"
+                        ));
+
+        if (!cart.getUserId()
+                .equals(getCurrentUserId())) {
+
+            throw new RuntimeException(
+                    "Unauthorized access"
+            );
         }
 
         cartRepository.delete(cart);
@@ -98,29 +176,79 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public void clearCart() {
+
         Long userId = getCurrentUserId();
-        cartRepository.deleteAll(cartRepository.findByUserId(userId));
+
+        List<CartProduct> items =
+                cartRepository.findByUserId(userId);
+
+        if (items.isEmpty()) {
+
+            throw new RuntimeException(
+                    "Cart is already empty"
+            );
+        }
+
+        cartRepository.deleteAll(items);
     }
 
     @Override
     @Transactional
-    public CartResponseDto updateQuantity(Long cartId, Integer quantity) {
+    public CartResponseDto updateQuantity(
+            Long cartId,
+            Integer quantity
+    ) {
 
         if (quantity == null || quantity <= 0) {
-            throw new RuntimeException("Invalid quantity");
+
+            throw new RuntimeException(
+                    "Quantity must be greater than 0"
+            );
         }
 
-        CartProduct cart = cartRepository.findById(cartId)
-                .orElseThrow(() -> new RuntimeException("Cart not found"));
+        CartProduct cart = cartRepository
+                .findById(cartId)
+                .orElseThrow(() ->
+                        new RuntimeException(
+                                "Cart item not found"
+                        ));
 
-        if (!cart.getUserId().equals(getCurrentUserId())) {
-            throw new RuntimeException("Unauthorized");
+        if (!cart.getUserId()
+                .equals(getCurrentUserId())) {
+
+            throw new RuntimeException(
+                    "Unauthorized access"
+            );
+        }
+
+        ProductEntity product = productRepository
+                .findById(cart.getProductId())
+                .orElseThrow(() ->
+                        new RuntimeException(
+                                "Product not found"
+                        ));
+
+        if (product.getStock() <= 0) {
+
+            throw new RuntimeException(
+                    product.getProductName()
+                            + " is out of stock"
+            );
+        }
+
+        if (quantity > product.getStock()) {
+
+            throw new RuntimeException(
+                    "Only "
+                            + product.getStock()
+                            + " items available"
+            );
         }
 
         cart.setQuantity(quantity);
 
-
-        CartProduct updated = cartRepository.saveAndFlush(cart);
+        CartProduct updated =
+                cartRepository.saveAndFlush(cart);
 
         return CartMapper.toDto(updated);
     }

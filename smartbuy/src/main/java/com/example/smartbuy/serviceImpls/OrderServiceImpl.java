@@ -2,12 +2,19 @@ package com.example.smartbuy.serviceImpls;
 
 import com.example.smartbuy.dtos.OrderRequestDto;
 import com.example.smartbuy.dtos.OrderResponseDto;
-import com.example.smartbuy.entity.*;
+import com.example.smartbuy.entity.CartProduct;
+import com.example.smartbuy.entity.Order;
+import com.example.smartbuy.entity.OrderProduct;
+import com.example.smartbuy.entity.ProductEntity;
 import com.example.smartbuy.enums.OrderStatus;
 import com.example.smartbuy.mapper.OrderMapper;
-import com.example.smartbuy.repository.*;
+import com.example.smartbuy.repository.CartRepository;
+import com.example.smartbuy.repository.OrderRepository;
+import com.example.smartbuy.repository.ProductRepository;
+import com.example.smartbuy.repository.UserRepository;
 import com.example.smartbuy.response.ApiResponse;
 import com.example.smartbuy.service.OrderService;
+
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,93 +27,190 @@ public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
     private final CartRepository cartRepository;
+    private final ProductRepository productRepository;
     private final UserRepository userRepository;
 
-    public OrderServiceImpl(OrderRepository orderRepository,
-                            CartRepository cartRepository,
-                            UserRepository userRepository) {
-
+    public OrderServiceImpl(
+            OrderRepository orderRepository,
+            CartRepository cartRepository,
+            ProductRepository productRepository,
+            UserRepository userRepository
+    ) {
         this.orderRepository = orderRepository;
         this.cartRepository = cartRepository;
+        this.productRepository = productRepository;
         this.userRepository = userRepository;
     }
 
     private Long getCurrentUserId() {
 
-        String email = SecurityContextHolder.getContext()
+        String email = SecurityContextHolder
+                .getContext()
                 .getAuthentication()
                 .getName();
 
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"))
+                .orElseThrow(() ->
+                        new RuntimeException(
+                                "User not found"
+                        ))
                 .getId();
     }
 
-
     @Override
     @Transactional
-    public OrderResponseDto placeOrder(OrderRequestDto request) {
+    public OrderResponseDto placeOrder(
+            OrderRequestDto request
+    ) {
+
+        if (request.getAddress() == null ||
+                request.getAddress().trim().isEmpty()) {
+
+            throw new RuntimeException(
+                    "Address is required"
+            );
+        }
+
+        if (request.getCartItemIds() == null ||
+                request.getCartItemIds().isEmpty()) {
+
+            throw new RuntimeException(
+                    "Please select cart items"
+            );
+        }
 
         Long userId = getCurrentUserId();
 
-        List<CartProduct> cartItems = cartRepository.findByUserId(userId);
+        List<CartProduct> cartItems =
+                cartRepository.findByIdIn(
+                        request.getCartItemIds()
+                );
 
         if (cartItems.isEmpty()) {
-            throw new RuntimeException("Cart is empty");
+
+            throw new RuntimeException(
+                    "Cart items not found"
+            );
         }
-
-
-        Order order = new Order();
-        order.setUserId(userId);
-        order.setStatus(OrderStatus.CONFIRMED);
-        order.setAddress(request.getAddress());
-
-        List<OrderProduct> items = new ArrayList<>();
 
         for (CartProduct cart : cartItems) {
 
-            OrderProduct op = new OrderProduct();
-            op.setProductId(cart.getProductId());
-            op.setProductName(cart.getProductName());
-            op.setPrice(cart.getPrice());
-            op.setQuantity(cart.getQuantity());
-            op.setImageUrl(cart.getImageUrl());
+            if (!cart.getUserId().equals(userId)) {
 
+                throw new RuntimeException(
+                        "Unauthorized cart access"
+                );
+            }
+        }
+
+        Order order = new Order();
+
+        order.setUserId(userId);
+
+        order.setAddress(request.getAddress());
+
+        order.setStatus(OrderStatus.CONFIRMED);
+
+        List<OrderProduct> orderProducts =
+                new ArrayList<>();
+
+        double totalAmount = 0;
+
+        for (CartProduct cart : cartItems) {
+
+            ProductEntity product =
+                    productRepository.findById(
+                            cart.getProductId()
+                    ).orElseThrow(() ->
+                            new RuntimeException(
+                                    "Product not found"
+                            ));
+
+            if (product.getStock() <= 0) {
+
+                throw new RuntimeException(
+                        product.getProductName()
+                                + " is out of stock"
+                );
+            }
+
+            if (cart.getQuantity()
+                    > product.getStock()) {
+
+                throw new RuntimeException(
+                        "Only "
+                                + product.getStock()
+                                + " items available for "
+                                + product.getProductName()
+                );
+            }
+
+            product.setStock(
+                    product.getStock()
+                            - cart.getQuantity()
+            );
+
+            productRepository.save(product);
+
+            OrderProduct op = new OrderProduct();
+
+            op.setProductId(cart.getProductId());
+
+            op.setProductName(
+                    cart.getProductName()
+            );
+
+            op.setSubCategoryName(
+                    cart.getSubCategoryName()
+            );
+
+            op.setProductDescription(
+                    cart.getProductDescription()
+            );
+
+            op.setPrice(cart.getPrice());
+
+            op.setQuantity(cart.getQuantity());
+
+            op.setImageUrl(cart.getImageUrl());
 
             op.setOrder(order);
 
-            items.add(op);
+            orderProducts.add(op);
+
+            totalAmount +=
+                    cart.getPrice()
+                            * cart.getQuantity();
         }
 
-        order.setItems(items);
+        order.setItems(orderProducts);
 
-        double total = items.stream()
-                .mapToDouble(i -> i.getPrice() * i.getQuantity())
-                .sum();
+        order.setTotalAmount(totalAmount);
 
-        order.setTotalAmount(total);
-
-
-        Order savedOrder = orderRepository.saveAndFlush(order);
-
+        Order savedOrder =
+                orderRepository.save(order);
 
         cartRepository.deleteAll(cartItems);
-
 
         return OrderMapper.toDto(savedOrder);
     }
 
-
     @Override
-    public ApiResponse<List<OrderResponseDto>> getOrders() {
+    public ApiResponse<List<OrderResponseDto>>
+    getOrders() {
 
         Long userId = getCurrentUserId();
 
-        List<OrderResponseDto> list = orderRepository.findByUserId(userId)
-                .stream()
-                .map(OrderMapper::toDto)
-                .toList();
+        List<OrderResponseDto> orders =
+                orderRepository.findByUserId(userId)
+                        .stream()
+                        .map(OrderMapper::toDto)
+                        .toList();
 
-        return new ApiResponse<>("SUCCESS", "Orders fetched", list);
+        return new ApiResponse<>(
+                "SUCCESS",
+                "Orders fetched successfully",
+                orders
+        );
     }
 }

@@ -137,6 +137,7 @@ public class SubCategoryServiceImpl implements SubCategoryService {
     ) {
 
         SubCategoryEntity subCategoryEntity =
+
                 subCategoryRepository.findById(id)
                         .orElseThrow(() ->
                                 new ResourceNotFoundException(
@@ -294,7 +295,7 @@ public class SubCategoryServiceImpl implements SubCategoryService {
                                         product.getQuantity()
                                 );
 
-                                dto.setImageUrl(
+                                dto.setImageUrls(
                                         product.getImageUrl()
                                 );
 

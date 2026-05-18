@@ -1,15 +1,20 @@
 package com.example.smartbuy.dtos;
 
 import com.example.smartbuy.entity.OrderProduct;
+
 import java.util.List;
 
 public class OrderResponseDto {
 
     private Long orderId;
+
     private Long userId;
+
     private Double totalAmount;
+
     private String status;
-    private String imageUrl;
+
+    private String address;
 
     private List<OrderProduct> items;
 
@@ -45,19 +50,19 @@ public class OrderResponseDto {
         this.status = status;
     }
 
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
     public List<OrderProduct> getItems() {
         return items;
     }
 
     public void setItems(List<OrderProduct> items) {
         this.items = items;
-    }
-
-    public String getImageUrl() {
-        return imageUrl;
-    }
-
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
     }
 }
