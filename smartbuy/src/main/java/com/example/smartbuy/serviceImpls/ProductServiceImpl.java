@@ -322,24 +322,21 @@ public class ProductServiceImpl implements ProductService {
 
         dto.setStock(product.getStock());
 
-        dto.setImageUrl(product.getImageUrl());
+        dto.setImageUrls(product.getImageUrl());
 
-
-        List<String> imageList = new ArrayList<>();
 
         if (product.getProductImages() != null &&
                 !product.getProductImages().isEmpty()) {
 
-            imageList.addAll(
+            dto.setImageUrls(
 
                     product.getProductImages()
                             .stream()
                             .map(ProductImage::getImageUrl)
-                            .toList()
+                            .findFirst()
+                            .orElse(null)
             );
         }
-
-        dto.setImages(imageList);
 
         dto.setCreatedAt(product.getCreatedAt());
 
