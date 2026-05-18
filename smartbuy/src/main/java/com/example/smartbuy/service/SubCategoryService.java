@@ -1,5 +1,6 @@
 package com.example.smartbuy.service;
 
+import com.example.smartbuy.dtos.ProductResponseDto;
 import com.example.smartbuy.dtos.SubCategoryRequestDto;
 import com.example.smartbuy.dtos.SubCategoryResponseDto;
 import com.example.smartbuy.enums.Status;
@@ -26,10 +27,18 @@ public interface SubCategoryService {
     ApiResponse<Page<SubCategoryResponseDto>> getAllSubCategories(
             int page,
             int size,
-            String sortBy
+            String sortBy,
+            String direction
     );
 
     ApiResponse<List<SubCategoryResponseDto>> getByStatus(Status status);
 
-    void softDeleteSubCategory(Long id);
+    ApiResponse<List<ProductResponseDto>> softDeleteSubCategory(Long id);
+
+    ApiResponse<List<ProductResponseDto>>
+    getProductsBySubCategory(
+            Long subCategoryId,
+            int page,
+            int size
+    );
 }

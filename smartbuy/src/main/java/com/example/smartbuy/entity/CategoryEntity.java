@@ -22,7 +22,7 @@ public class CategoryEntity {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
     private List<SubCategoryEntity> subCategories = new ArrayList<>();
 
     public Status getStatus() {
