@@ -1,11 +1,13 @@
 package com.example.smartbuy.entity;
 
 import com.example.smartbuy.enums.ProductStatus;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "Products")
@@ -18,13 +20,25 @@ public class ProductEntity {
     @Column(name = "product_name")
     private String productName;
 
-    @Column(name = "product_description")
+    @Lob
+    @Column(name = "product_description", columnDefinition = "TEXT")
     private String productDescription;
 
     private Double price;
     private Integer quantity;
 
     private Integer stock;
+    @OneToMany(mappedBy="product", cascade=CascadeType.ALL, fetch=FetchType.LAZY)
+    private List<ProductImage> productImages;
+
+    @OneToMany(mappedBy = "prduct", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    public List<ProductImage> getProductImages() {
+        return productImages;
+    }
+
+    public void setProductImages(List<ProductImage> productImages) {
+        this.productImages = productImages;
+    }
 
     @Column(name = "image_url")
     private String imageUrl;
@@ -43,10 +57,12 @@ public class ProductEntity {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "subcategory_id")
     private SubCategoryEntity subCategory;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "category_id")
     private CategoryEntity category;

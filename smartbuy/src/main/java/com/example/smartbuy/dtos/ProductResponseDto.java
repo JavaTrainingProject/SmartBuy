@@ -12,6 +12,8 @@ public class ProductResponseDto {
     private String imageUrls;
     private String categoryName;
     private String subCategoryName;
+    private Long categoryId;
+    private Long subCategoryId;
 
     private Integer stock;
 
@@ -92,4 +94,20 @@ public class ProductResponseDto {
     public String getImageUrls() { return imageUrls; }
 
     public void setImageUrls(String imageUrls) { this.imageUrls = imageUrls; }
+
+    public Long getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(Long categoryId) {
+        this.categoryId = categoryId;
+    }
+
+    public Long getSubCategoryId() {
+        return subCategoryId;
+    }
+
+    public void setSubCategoryId(Long subCategoryId) {
+        this.subCategoryId = subCategoryId;
+    }
 }

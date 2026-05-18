@@ -11,6 +11,7 @@ public class UserEntity {
 
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
+        @Column(name="user_id", unique = true)
         private Long id;
 
         private String user_name;

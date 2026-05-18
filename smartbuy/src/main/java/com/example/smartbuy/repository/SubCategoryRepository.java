@@ -10,7 +10,10 @@ import java.util.List;
 
 public interface SubCategoryRepository extends JpaRepository<SubCategoryEntity, Long> {
 
-    boolean existsBySubCategoryNameIgnoreCase(String subCategoryName);
+    boolean existsBySubCategoryNameIgnoreCaseAndCategory_Id(
+            String subCategoryName,
+            Long categoryId
+    );
 
     boolean existsBySubCategoryNameIgnoreCaseAndIdNot(
             String subCategoryName,
@@ -23,9 +26,8 @@ public interface SubCategoryRepository extends JpaRepository<SubCategoryEntity, 
 
     Long countByStatus(Status status);
 
-    Page<SubCategoryEntity> findByCategoryIdAndStatus(
-            Long categoryId,
-            Status status,
-            Pageable pageable
-    );
+    Page<SubCategoryEntity> findByCategoryIdAndStatus(Long categoryId, Status status, Pageable pageable);
+
+    List<SubCategoryEntity> findByCategory_Id(Long categoryId);
+
 }

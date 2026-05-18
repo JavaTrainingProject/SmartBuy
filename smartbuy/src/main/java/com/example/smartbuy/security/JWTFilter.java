@@ -26,7 +26,23 @@ public class JWTFilter extends OncePerRequestFilter {
         this.jwtService = jwtService;
     }
 
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+
+    @Override
+    protected void doFilterInternal(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain filterChain
+    ) throws ServletException, IOException {
+
+        String path = request.getServletPath();
+
+        if (path.startsWith("/api/auth") ||
+                path.startsWith("/products") ||
+                path.startsWith("/uploads")) {
+
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         String authHeader = request.getHeader("Authorization");
         String token = null;
@@ -34,15 +50,18 @@ public class JWTFilter extends OncePerRequestFilter {
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             token = authHeader.substring(7);
         }
+
         try {
-            if (token != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            if (token != null &&
+                    SecurityContextHolder.getContext().getAuthentication() == null) {
+
                 if (!jwtService.isTokenExpired(token)) {
 
                     Claims claims = jwtService.extractClaims(token);
-                    String email = claims.getSubject();
                     String role = claims.get("role", String.class);
 
-                    List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_" + role));
+                    List<SimpleGrantedAuthority> authorities =
+                            List.of(new SimpleGrantedAuthority("ROLE_" + role));
 
                     UsernamePasswordAuthenticationToken auth =
                             new UsernamePasswordAuthenticationToken(
@@ -51,19 +70,19 @@ public class JWTFilter extends OncePerRequestFilter {
                                     authorities
                             );
 
-                    auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    auth.setDetails(
+                            new WebAuthenticationDetailsSource()
+                                    .buildDetails(request)
+                    );
 
-                    SecurityContextHolder.getContext().setAuthentication(auth);
+                    SecurityContextHolder.getContext()
+                            .setAuthentication(auth);
                 }
             }
         } catch (JwtException | IllegalArgumentException e) {
             SecurityContextHolder.clearContext();
-
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("Invalid JWT Token");
-            return;
-
         }
+
         filterChain.doFilter(request, response);
     }
 }

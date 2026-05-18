@@ -33,15 +33,19 @@ public class SecurityConfig {
                 .cors(cors ->{})
                 .authorizeHttpRequests(auth ->auth
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/admin/categories/active").permitAll()
                      .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/user/**").hasRole("USER")
                         .requestMatchers("/api/categories/**").permitAll()
                         .requestMatchers("/api/subcategory/**").permitAll()
-                        .requestMatchers("/api/admin/categories/active").permitAll()
+
                         .requestMatchers(HttpMethod.POST, "/api/products/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/products/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/products/**").hasRole("ADMIN")
                         .requestMatchers("/api/products/**").hasAnyRole("ADMIN","USER")
+                        .requestMatchers("/api/wishlist/**").authenticated()
+                        .requestMatchers("/api/cart/**").hasRole("USER")
+
                     .anyRequest().authenticated()
 
                 );

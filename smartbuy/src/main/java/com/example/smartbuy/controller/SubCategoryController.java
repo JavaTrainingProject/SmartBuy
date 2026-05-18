@@ -1,5 +1,6 @@
 package com.example.smartbuy.controller;
 
+import com.example.smartbuy.dtos.ProductResponseDto;
 import com.example.smartbuy.dtos.SubCategoryRequestDto;
 import com.example.smartbuy.dtos.SubCategoryResponseDto;
 import com.example.smartbuy.dtos.UpdateStatusRequestDto;
@@ -24,7 +25,7 @@ public class SubCategoryController {
         }
 
         @PostMapping
-        @PreAuthorize("hasRole('ADMIN')")
+       @PreAuthorize("hasRole('ADMIN')")
         public ResponseEntity<SubCategoryResponseDto> create(
                 @RequestBody SubCategoryRequestDto dto) {
 
@@ -89,15 +90,21 @@ public class SubCategoryController {
 
     @GetMapping
     public ApiResponse<Page<SubCategoryResponseDto>> getAllSubCategories(
+
             @RequestParam(defaultValue = "0") int page,
+
             @RequestParam(defaultValue = "5") int size,
-            @RequestParam(defaultValue = "id") String sortBy
+
+            @RequestParam(defaultValue = "id") String sortBy,
+
+            @RequestParam(defaultValue = "des") String direction
     ) {
 
         return subCategoryService.getAllSubCategories(
                 page,
                 size,
-                sortBy
+                sortBy,
+                direction
         );
     }
 
