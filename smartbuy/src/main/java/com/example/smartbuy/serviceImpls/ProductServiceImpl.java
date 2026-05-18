@@ -19,13 +19,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 @Service
 public class ProductServiceImpl implements ProductService {
-
-
 
         private final ProductRepository productRepository;
 
@@ -59,69 +58,35 @@ public class ProductServiceImpl implements ProductService {
         ) {
 
             CategoryEntity category =
-                    categoryRepository.findById(
-                                    dto.getCategoryId()
-                            )
-                            .orElseThrow(() ->
-                                    new ResourceNotFoundException(
-                                            "Category not found"
-                                    )
-                            );
+                    categoryRepository.findById(dto.getCategoryId())
+                            .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
 
             SubCategoryEntity subCategory =
                     subCategoryRepository.findById(
-                                    dto.getSubCategoryId()
-                            )
-                            .orElseThrow(() ->
-                                    new ResourceNotFoundException(
-                                            "SubCategory not found"
-                                    )
-                            );
+                                    dto.getSubCategoryId())
+                            .orElseThrow(() -> new ResourceNotFoundException("SubCategory not found"));
 
             ProductEntity product = new ProductEntity();
 
-            product.setProductName(
-                    dto.getProduct_name()
-            );
+            product.setProductName(dto.getProduct_name());
 
-            product.setProductDescription(
-                    dto.getProduct_description()
-            );
+            product.setProductDescription(dto.getProduct_description());
 
-            product.setPrice(
-                    dto.getProduct_price()
-            );
+            product.setPrice(dto.getProduct_price());
 
-            product.setQuantity(
-                    dto.getQuantity()
-            );
+            product.setQuantity(dto.getQuantity());
 
-            product.setStock(
-                    dto.getStock()
-            );
+            product.setStock(dto.getStock());
 
             product.setCategory(category);
 
             product.setSubCategory(subCategory);
 
-            product.setStatus(
-                    ProductStatus.ACTIVE
-            );
+            product.setStatus(ProductStatus.ACTIVE);
 
-            ProductEntity savedProduct =
-                    productRepository.save(product);
+            ProductEntity savedProduct = productRepository.save(product);
 
-            if (images != null &&
-                    !images.isEmpty()) {
-
-                String thumbnail =
-                        uploadImage(images.get(0));
-
-                savedProduct.setImageUrl(
-                        thumbnail
-                );
-
-                productRepository.save(savedProduct);
+            if (images != null && !images.isEmpty()) {
 
                 saveImages(images, savedProduct);
             }
@@ -136,10 +101,7 @@ public class ProductServiceImpl implements ProductService {
         ) {
 
             return productRepository
-                    .findAll(
-                            PageRequest.of(page, size)
-                    )
-                    .map(this::mapToResponse);
+                    .findAll(PageRequest.of(page, size)).map(this::mapToResponse);
         }
 
         @Override
@@ -167,65 +129,40 @@ public class ProductServiceImpl implements ProductService {
 
             ProductEntity product =
                     productRepository.findById(id)
-                            .orElseThrow(() ->
-                                    new ResourceNotFoundException(
-                                            "Product not found"
-                                    )
-                            );
+                            .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
 
-            product.setProductName(
-                    dto.getProduct_name()
-            );
+            product.setProductName(dto.getProduct_name());
 
-            product.setProductDescription(
-                    dto.getProduct_description()
-            );
+            product.setProductDescription(dto.getProduct_description());
 
-            product.setPrice(
-                    dto.getProduct_price()
-            );
+            product.setPrice(dto.getProduct_price());
 
-            product.setQuantity(
-                    dto.getQuantity()
-            );
+            product.setQuantity(dto.getQuantity());
 
-            product.setStock(
-                    dto.getStock()
-            );
+            product.setStock(dto.getStock());
 
-            product.setUpdatedAt(
-                    LocalDateTime.now()
-            );
+            product.setUpdatedAt(LocalDateTime.now());
 
-            if (images != null &&
-                    !images.isEmpty()) {
+            if (images != null && !images.isEmpty()) {
 
-                String thumbnail =
-                        uploadImage(images.get(0));
+                String thumbnail = uploadImage(images.get(0));
 
-                product.setImageUrl(
-                        thumbnail
-                );
+                product.setImageUrl(thumbnail);
 
                 saveImages(images, product);
             }
 
-            ProductEntity updatedProduct =
-                    productRepository.save(product);
+            ProductEntity updatedProduct = productRepository.save(product);
 
             return mapToResponse(updatedProduct);
         }
 
         @Override
-        public String deleteProduct(
-                Long id
-        ) {
+        public String deleteProduct(Long id) {
 
             if (!productRepository.existsById(id)) {
 
-                throw new ResourceNotFoundException(
-                        "Product not found"
-                );
+                throw new ResourceNotFoundException("Product not found");
             }
 
             productRepository.deleteById(id);
@@ -234,33 +171,21 @@ public class ProductServiceImpl implements ProductService {
         }
 
         @Override
-        public String updateProductStatus(
-                Long id,
-                String status
-        ) {
+        public String updateProductStatus(Long id, String status) {
 
             ProductEntity product =
                     productRepository.findById(id)
-                            .orElseThrow(() ->
-                                    new ResourceNotFoundException(
-                                            "Product not found"
-                                    )
-                            );
+                            .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
 
             ProductStatus productStatus;
 
             try {
 
-                productStatus =
-                        ProductStatus.valueOf(
-                                status.toUpperCase()
-                        );
+                productStatus = ProductStatus.valueOf(status.toUpperCase());
 
             } catch (Exception e) {
 
-                throw new IllegalArgumentException(
-                        "Invalid status"
-                );
+                throw new IllegalArgumentException("Invalid status");
             }
 
             product.setStatus(productStatus);
@@ -271,24 +196,18 @@ public class ProductServiceImpl implements ProductService {
         }
 
         @Override
-        public List<ProductResponseDto> getProductsByStatus(
-                String status
-        ) {
+        public List<ProductResponseDto> getProductsByStatus(String status) {
 
             ProductStatus productStatus;
 
             try {
 
                 productStatus =
-                        ProductStatus.valueOf(
-                                status.toUpperCase()
-                        );
+                        ProductStatus.valueOf(status.toUpperCase());
 
             } catch (Exception e) {
 
-                throw new IllegalArgumentException(
-                        "Invalid status"
-                );
+                throw new IllegalArgumentException("Invalid status");
             }
 
             return productRepository
@@ -300,11 +219,7 @@ public class ProductServiceImpl implements ProductService {
 
         @Override
         public ApiResponse<ProductPageRespnseDto>
-        getProductsBySubCategory(
-                Long subCategoryId,
-                int page,
-                int size
-        ) {
+        getProductsBySubCategory(Long subCategoryId, int page, int size) {
 
             return null;
         }
@@ -334,399 +249,110 @@ public class ProductServiceImpl implements ProductService {
 
             try {
 
-                String contentType =
-                        file.getContentType();
+                String contentType = file.getContentType();
 
-                if (contentType == null ||
-                        !contentType.startsWith("image/")) {
+                if (contentType == null || !contentType.startsWith("image/")) {
 
-                    throw new IllegalArgumentException(
-                            "Only image files are allowed"
-                    );
+                    throw new IllegalArgumentException("Only image files are allowed");
                 }
 
                 Map uploadResult =
-                        cloudinary.uploader().upload(
-                                file.getBytes(),
-                                ObjectUtils.asMap(
-                                        "resource_type",
-                                        "auto"
-                                )
-                        );
+                        cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap("resource_type", "auto"));
 
-                return uploadResult
-                        .get("secure_url")
-                        .toString();
+                return uploadResult.get("secure_url").toString();
 
             } catch (Exception e) {
 
                 e.printStackTrace();
 
-                throw new IllegalStateException(
-                        e.getMessage()
-                );
+                throw new IllegalStateException(e.getMessage());
             }
         }
 
-    private void saveImages(
-            List<MultipartFile> images,
-            ProductEntity product
-    ) {
+    private void saveImages(List<MultipartFile> images, ProductEntity product) {
 
-        if (images == null ||
-                images.isEmpty()) {
+        if (images == null || images.isEmpty()) {
 
             return;
         }
 
-        for (int i = 1; i < images.size(); i++) {
+        for (int i = 0; i < images.size(); i++) {
 
             MultipartFile file = images.get(i);
 
             try {
 
                 Map uploadResult =
-                        cloudinary.uploader().upload(
-                                file.getBytes(),
-                                ObjectUtils.asMap(
-                                        "resource_type",
-                                        "auto"
-                                )
-                        );
+                        cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap("resource_type", "auto"));
 
-                String imageUrl =
-                        uploadResult
-                                .get("secure_url")
-                                .toString();
+                String imageUrl = uploadResult.get("secure_url").toString();
 
-                ProductImage productImage =
-                        new ProductImage();
+                ProductImage productImage = new ProductImage();
 
-                productImage.setImageUrl(
-                        imageUrl
-                );
+                productImage.setImageUrl(imageUrl);
 
-                productImage.setProduct(
-                        product
-                );
+                productImage.setProduct(product);
 
-                imageRepository.save(
-                        productImage
-                );
+                imageRepository.save(productImage);
 
             } catch (Exception e) {
 
                 e.printStackTrace();
 
-                throw new IllegalStateException(
-                        e.getMessage()
-                );
+                throw new IllegalStateException(e.getMessage());
             }
         }
     }
-        private ProductResponseDto mapToResponse(
-                ProductEntity product
-        ) {
 
-            ProductResponseDto dto =
-                    new ProductResponseDto();
-
-            dto.setId(product.getId());
-
-            dto.setName(
-                    product.getProductName()
-            );
-
-            dto.setDescription(
-                    product.getProductDescription()
-            );
-
-            dto.setPrice(
-                    product.getPrice()
-            );
-
-            dto.setQuantity(
-                    product.getQuantity()
-            );
-
-            dto.setStock(
-                    product.getStock()
-            );
-
-            dto.setImageUrl(
-                    product.getImageUrl()
-            );
-
-            dto.setCreatedAt(
-                    product.getCreatedAt()
-            );
-
-            if (product.getCategory() != null) {
-
-                dto.setCategoryName(
-                        product.getCategory()
-                                .getCategoryName()
-                );
-            }
-
-            if (product.getSubCategory() != null) {
-
-                dto.setSubCategoryName(
-                        product.getSubCategory()
-                                .getSubCategoryName()
-                );
-            }
-
-            return dto;
-        }
-    }
-
-
-   /* private final ProductRepository productRepository;
-    private final CategoryRepository categoryRepository;
-    private final SubCategoryRepository subCategoryRepository;
-    private final ProductImageRepository imageRepository;
-    private final Cloudinary cloudinary;
-
-
-
-    public ProductServiceImpl(ProductRepository productRepository,
-                              CategoryRepository categoryRepository,
-                              SubCategoryRepository subCategoryRepository,
-                              ProductImageRepository imageRepository,
-                              Cloudinary cloudinary) {
-
-        this.productRepository = productRepository;
-        this.categoryRepository = categoryRepository;
-        this.subCategoryRepository = subCategoryRepository;
-        this.imageRepository = imageRepository;
-        this.cloudinary=cloudinary;
-    }
-
-    @Override
-    public ProductResponseDto createProduct(ProductRequestDto dto, List<MultipartFile> images) {
-
-        CategoryEntity category = categoryRepository.findById(dto.getCategoryId())
-                .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
-
-        SubCategoryEntity subCategory = subCategoryRepository.findById(dto.getSubCategoryId())
-                .orElseThrow(() -> new ResourceNotFoundException("SubCategory not found"));
-
-        ProductEntity product = new ProductEntity();
-
-        product.setProductName(dto.getProduct_name());
-        product.setProductDescription(dto.getProduct_description());
-        product.setPrice(dto.getProduct_price());
-        product.setQuantity(dto.getQuantity());
-        product.setStock(dto.getStock());
-
-        product.setCategory(category);
-        product.setSubCategory(subCategory);
-        product.setStatus((ProductStatus.ACTIVE));
-        if (images != null && !images.isEmpty()) {
-            String imageUrl = uploadImage(images.get(0));
-            product.setImageUrl(imageUrl);
-        }
-
-       // product.setImageUrl(uploadImage(image));
-        //return mapToResponse(productRepository.save(product));
-        ProductEntity saved=productRepository.save(product);
-        return mapToResponse(saved);
-    }
-
-    @Override
-    public Page<ProductResponseDto> getAllProducts(int page, int size) {
-        return productRepository.findAll(PageRequest.of(page, size))
-                .map(this::mapToResponse);
-    }
-
-    @Override
-    public ProductResponseDto getProductById(Long id) {
-
-        ProductEntity product = productRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("product not found.."));
-        return mapToResponse(product);
-    }
-
-
-//        if (id == null || id <= 0) {
-//            throw new IllegalArgumentException("Invalid product ID");
-//        }
-//
-//        ProductEntity product = productRepository.findById(id)
-//                .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
-//
-//        return mapToResponse(product);
-//    }
-
-
-    @Override
-    public ProductResponseDto updateProduct(Long id, ProductRequestDto dto, List<MultipartFile> images) {
-
-        ProductEntity product = productRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
-
-        product.setProductName(dto.getProduct_name());
-        product.setProductDescription(dto.getProduct_description());
-        product.setPrice(dto.getProduct_price());
-        product.setQuantity(dto.getQuantity());
-        product.setStock(dto.getStock());
-        product.setUpdatedAt(LocalDateTime.now());
-        if (images != null && !images.isEmpty()) {
-            String imageUrl = uploadImage(images.get(0));
-            product.setImageUrl(imageUrl);
-        }
-
-        ProductEntity updated = productRepository.save(product);
-
-
-        return mapToResponse(updated);
-    }
-
-    @Override
-    public String deleteProduct(Long id) {
-        if (!productRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Product not found");
-        }
-        productRepository.deleteById(id);
-        return "Product deleted successfully";
-    }
-
-    @Override
-    public String updateProductStatus(Long id, String status) {
-
-        ProductEntity product = productRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
-
-        ProductStatus productStatus;
-
-        try {
-            productStatus = ProductStatus.valueOf(status.trim().toUpperCase());
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Invalid status. Use ACTIVE or INACTIVE");
-        }
-
-        product.setStatus(productStatus);
-        productRepository.save(product);
-
-        return "Status updated successfully";
-    }
-
-
-    private String uploadImage(MultipartFile file) {
-
-        if (file == null || file.isEmpty()) return null;
-
-        try {
-            File dir = new File(uploadDir);
-            if (!dir.exists()) {
-                dir.mkdirs();
-            }
-
-
-            String originalName = file.getOriginalFilename();
-            String cleanName = (originalName != null)
-                    ? originalName.replaceAll("\\s+", "_")
-                    : "image";
-
-            String fileName = System.currentTimeMillis() + "_" + cleanName;
-
-            File destination = new File(dir, fileName);
-            file.transferTo(destination);
-
-            return "/uploads/" + fileName;
-
-        } catch (Exception e) {
-            throw new IllegalStateException("File upload failed: " + file.getOriginalFilename());
-        }
-    }
-
-
-    private List<ProductImage> saveImages(List<MultipartFile> images, ProductEntity product) {
-
-        List<ProductImage> list = new ArrayList<>();
-
-        if (images == null) return list;
-
-        for (MultipartFile file : images) {
-
-            if (file.isEmpty()) continue;
-
-            try {
-                File dir = new File(uploadDir);
-                if (!dir.exists()) {
-                    dir.mkdirs();
-                }
-
-                String originalName = file.getOriginalFilename();
-                String cleanName = (originalName != null)
-                        ? originalName.replaceAll("\\s+", "_")
-                        : "image";
-
-                String fileName = System.currentTimeMillis() + "_" + cleanName;
-
-                File destination = new File(dir, fileName);
-                file.transferTo(destination);
-
-                ProductImage img = new ProductImage();
-                img.setImageUrl(baseUrl + "/uploads/" + fileName);
-                img.setProduct(product);
-
-                list.add(img);
-
-            } catch (Exception e) {
-                throw new IllegalStateException("File upload failed: " + file.getOriginalFilename());
-            }
-        }
-
-        return imageRepository.saveAll(list);
-    }
-
-    private ProductResponseDto mapToResponse(ProductEntity product) {
+    private ProductResponseDto mapToResponse(
+            ProductEntity product
+    ) {
 
         ProductResponseDto dto = new ProductResponseDto();
 
         dto.setId(product.getId());
+
         dto.setName(product.getProductName());
+
         dto.setDescription(product.getProductDescription());
+
         dto.setPrice(product.getPrice());
+
         dto.setQuantity(product.getQuantity());
+
         dto.setStock(product.getStock());
+
+        dto.setImageUrl(product.getImageUrl());
+
+
+        List<String> imageList = new ArrayList<>();
+
+        if (product.getProductImages() != null &&
+                !product.getProductImages().isEmpty()) {
+
+            imageList.addAll(
+
+                    product.getProductImages()
+                            .stream()
+                            .map(ProductImage::getImageUrl)
+                            .toList()
+            );
+        }
+
+        dto.setImages(imageList);
+
         dto.setCreatedAt(product.getCreatedAt());
 
         if (product.getCategory() != null) {
+
             dto.setCategoryName(product.getCategory().getCategoryName());
         }
 
         if (product.getSubCategory() != null) {
-            dto.setSubCategoryName(product.getSubCategory().getSubCategoryName());
-        }
 
-        if (product.getImageUrl() != null) {
-            dto.setImageUrl(product.getImageUrl());
+            dto.setSubCategoryName(product.getSubCategory().getSubCategoryName());
         }
 
         return dto;
     }
-
-    @Override
-    public List<ProductResponseDto> getProductsByStatus(String status) {
-
-        ProductStatus productStatus;
-
-        try {
-            productStatus = ProductStatus.valueOf(status.toUpperCase());
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Invalid status. Use ACTIVE or INACTIVE");
-        }
-
-//        return productRepository.findByStatus(productStatus)
-//                .stream()
-//                .map(this::mapToResponse)
-//                .toList();
-        return productRepository.findByStatus(productStatus).stream().map(this::mapToResponse).toList();
     }
-
-
-}
-*/

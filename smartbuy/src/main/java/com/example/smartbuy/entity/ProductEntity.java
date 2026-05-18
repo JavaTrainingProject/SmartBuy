@@ -20,7 +20,8 @@ public class ProductEntity {
     @Column(name = "product_name")
     private String productName;
 
-    @Column(name = "product_description")
+    @Lob
+    @Column(name = "product_description", columnDefinition = "TEXT")
     private String productDescription;
 
     private Double price;
@@ -30,6 +31,7 @@ public class ProductEntity {
     @OneToMany(mappedBy="product", cascade=CascadeType.ALL, fetch=FetchType.LAZY)
     private List<ProductImage> productImages;
 
+    @OneToMany(mappedBy = "prduct", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     public List<ProductImage> getProductImages() {
         return productImages;
     }
