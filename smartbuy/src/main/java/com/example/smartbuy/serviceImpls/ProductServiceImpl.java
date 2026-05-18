@@ -157,45 +157,34 @@ public class ProductServiceImpl implements ProductService {
             return mapToResponse(updatedProduct);
         }
 
-        @Override
-        public String deleteProduct(Long id) {
+    @Override
+    public String deleteProduct(Long id) {
 
-            if (!productRepository.existsById(id)) {
+        ProductEntity product = productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
 
-                throw new ResourceNotFoundException("Product not found");
-            }
+        product.setStatus(ProductStatus.INACTIVE);
 
-            productRepository.deleteById(id);
+        productRepository.save(product);
 
-            return "Product deleted successfully";
-        }
+        return "Product soft deleted successfully";
+    }
 
-        @Override
-        public String updateProductStatus(Long id, String status) {
+    @Override
+    public String updateProductStatus(Long id, ProductStatus status) {
 
-            ProductEntity product =
-                    productRepository.findById(id)
-                            .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+        ProductEntity product = productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
 
-            ProductStatus productStatus;
+        product.setStatus(status);
 
-            try {
+        productRepository.save(product);
 
-                productStatus = ProductStatus.valueOf(status.toUpperCase());
+        return "Product status updated successfully";
+    }
 
-            } catch (Exception e) {
 
-                throw new IllegalArgumentException("Invalid status");
-            }
-
-            product.setStatus(productStatus);
-
-            productRepository.save(product);
-
-            return "Status updated successfully";
-        }
-
-        @Override
+    @Override
         public List<ProductResponseDto> getProductsByStatus(String status) {
 
             ProductStatus productStatus;
@@ -317,6 +306,8 @@ public class ProductServiceImpl implements ProductService {
         dto.setDescription(product.getProductDescription());
 
         dto.setPrice(product.getPrice());
+
+        dto.setStatus(product.getStatus());
 
         dto.setQuantity(product.getQuantity());
 

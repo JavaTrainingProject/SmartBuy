@@ -1,5 +1,7 @@
 package com.example.smartbuy.dtos;
 
+import com.example.smartbuy.enums.ProductStatus;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -14,6 +16,15 @@ public class ProductResponseDto {
     private String subCategoryName;
     private Long categoryId;
     private Long subCategoryId;
+    private ProductStatus status;
+
+    public ProductStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(ProductStatus status) {
+        this.status = status;
+    }
 
     private Integer stock;
 
