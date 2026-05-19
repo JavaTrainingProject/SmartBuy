@@ -18,11 +18,18 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
 
     Page<ProductEntity> findBySubCategoryIdAndStatus(Long subCategoryId, Status status, Pageable pageable);
 
-    List<ProductEntity> findByStatus(Status status);
+ Page<ProductEntity> findByStatus(
+         ProductStatus status,
+         Pageable pageable
+ );
 
     Page<ProductEntity> findBySubCategory_Id(Long subCategoryId, Pageable pageable);
+ Page<ProductEntity> findBySubCategoryIdAndStatus(
+         Long subCategoryId,
+         ProductStatus status,
+         Pageable pageable
+ );
 
-    List<ProductEntity> findBySubCategory_Id(Long subCategoryId);
     List<ProductEntity> findByProductName(String productName);
 
  Optional<ProductEntity> findByProductNameIgnoreCase(String productName);
