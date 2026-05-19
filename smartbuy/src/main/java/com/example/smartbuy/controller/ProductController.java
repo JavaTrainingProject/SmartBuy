@@ -175,6 +175,68 @@ public class ProductController {
           var productList =   productService.getAllProductByName(productName);
           return ResponseEntity.ok(productList);
     }
+
+    @GetMapping("/active")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
+    public ResponseEntity<ApiResponse<Page<ProductResponseDto>>> getActiveProducts(
+
+            @RequestParam(defaultValue = "0") int page,
+
+            @RequestParam(defaultValue = "10") int size,
+
+            @RequestParam(defaultValue = "id") String sortBy,
+
+            @RequestParam(defaultValue = "desc") String direction
+    ) {
+
+        Page<ProductResponseDto> response =
+                productService.getActiveProducts(
+                        page,
+                        size,
+                        sortBy,
+                        direction
+                );
+
+        return ResponseEntity.ok(
+                new ApiResponse<>(
+                        "SUCCESS",
+                        "Active products fetched successfully",
+                        response
+                )
+        );
+    }
+
+
+
+
+    @GetMapping("/subcategory/{subCategoryId}/active")
+    public ResponseEntity<ApiResponse<ProductPageRespnseDto>>
+    getActiveProductsBySubCategory(
+
+            @PathVariable Long subCategoryId,
+
+            @RequestParam(defaultValue = "0") int page,
+
+            @RequestParam(defaultValue = "10") int size,
+
+            @RequestParam(defaultValue = "id") String sortBy,
+
+            @RequestParam(defaultValue = "desc") String direction
+    ) {
+
+        ApiResponse<ProductPageRespnseDto> response =
+                productService
+                        .getActiveProductsBySubCategory(
+                                subCategoryId,
+                                page,
+                                size,
+                                sortBy,
+                                direction
+                        );
+
+        return ResponseEntity.ok(response);
+    }
+
 }
 
 
