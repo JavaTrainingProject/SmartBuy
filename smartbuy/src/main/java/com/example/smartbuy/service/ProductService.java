@@ -14,7 +14,7 @@ public interface ProductService {
 
     ProductResponseDto createProduct(ProductRequestDto requestDto, List<MultipartFile> images);
 
-    Page<ProductResponseDto> getAllProducts(int page, int size);
+    Page<ProductResponseDto> getAllProducts(int page, int size, String sortBy, String direction);
 
     ProductResponseDto getProductById(Long id);
 

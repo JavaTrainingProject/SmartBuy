@@ -16,6 +16,8 @@ import com.example.smartbuy.response.ApiResponse;
 import com.example.smartbuy.service.ProductService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDateTime;
@@ -131,15 +133,23 @@ public class ProductServiceImpl implements ProductService {
             return mapToResponse(savedProduct);
         }
 
-        @Override
-        public Page<ProductResponseDto> getAllProducts(
-                int page,
-                int size
-        ) {
+    @Override
+    public Page<ProductResponseDto> getAllProducts(
+            int page,
+            int size,
+            String sortBy,
+            String direction
+    ) {
 
-            return productRepository
-                    .findAll(PageRequest.of(page, size)).map(this::mapToResponse);
-        }
+        Sort sort = direction.equalsIgnoreCase("asc")
+                ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        return productRepository.findAll(pageable)
+                .map(this::mapToResponse);
+    }
 
         @Override
         public ProductResponseDto getProductById(
