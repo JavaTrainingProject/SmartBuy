@@ -97,9 +97,8 @@ public class SubCategoryServiceImpl implements SubCategoryService {
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "id", categoryId));
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
-
         Page<SubCategoryEntity> subCategoryPage =
-                subCategoryRepository.findByCategoryIdAndStatus(
+                subCategoryRepository.findByCategory_IdAndStatus(
                         categoryId,
                         Status.ACTIVE,
                         pageable
