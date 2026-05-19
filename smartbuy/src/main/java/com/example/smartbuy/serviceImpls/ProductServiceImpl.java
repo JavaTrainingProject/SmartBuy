@@ -22,6 +22,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -65,6 +66,30 @@ public class ProductServiceImpl implements ProductService {
                     subCategoryRepository.findById(
                                     dto.getSubCategoryId())
                             .orElseThrow(() -> new ResourceNotFoundException("SubCategory not found"));
+
+            Optional<ProductEntity> existingProduct =
+                    productRepository.findByProductNameIgnoreCase(
+                            dto.getProduct_name()
+                    );
+
+            if (existingProduct.isPresent()) {
+
+                ProductEntity product =
+                        existingProduct.get();
+
+                product.setStock(
+                        product.getStock() + dto.getStock()
+                );
+
+                product.setQuantity(
+                        product.getQuantity() + dto.getQuantity()
+                );
+
+                ProductEntity updatedProduct =
+                        productRepository.save(product);
+
+                return mapToResponse(updatedProduct);
+            }
 
             ProductEntity product = new ProductEntity();
 
@@ -325,13 +350,13 @@ public class ProductServiceImpl implements ProductService {
 
         dto.setStock(product.getStock());
 
-        dto.setImageUrls(product.getImageUrl());
+        dto.setImageUrl(product.getImageUrl());
 
 
         if (product.getProductImages() != null &&
                 !product.getProductImages().isEmpty()) {
 
-            dto.setImageUrls(
+            dto.setImageUrl(
 
                     product.getProductImages()
                             .stream()
