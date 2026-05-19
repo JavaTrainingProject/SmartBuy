@@ -35,7 +35,7 @@ public class ProductMapper {
                     entity.getStock()
             );
 
-            dto.setImageUrls(
+            dto.setImageUrl(
                     entity.getImageUrl()
             );
 
@@ -60,7 +60,7 @@ public class ProductMapper {
             if (entity.getProductImages() != null &&
                     !entity.getProductImages().isEmpty()) {
 
-                dto.setImageUrls(
+                dto.setImageUrl(
 
                         entity.getProductImages()
                                 .stream()

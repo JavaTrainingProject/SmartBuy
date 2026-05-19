@@ -11,7 +11,7 @@ public class ProductResponseDto {
     private String description;
     private Double price;
     private Integer quantity;
-    private String imageUrls;
+    private String imageUrl;
     private String categoryName;
     private String subCategoryName;
     private Long categoryId;
@@ -102,9 +102,13 @@ public class ProductResponseDto {
         this.createdAt = createdAt;
     }
 
-    public String getImageUrls() { return imageUrls; }
+    public String getImageUrl() {
+        return imageUrl;
+    }
 
-    public void setImageUrls(String imageUrls) { this.imageUrls = imageUrls; }
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 
     public Long getCategoryId() {
         return categoryId;
