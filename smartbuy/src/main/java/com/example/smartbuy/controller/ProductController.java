@@ -55,15 +55,20 @@ public class ProductController {
     @PreAuthorize("hasAnyRole('ADMIN','USER')")
     public ResponseEntity<ApiResponse<Page<ProductResponseDto>>> getAllProducts(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "desc") String direction
+    ) {
 
         Page<ProductResponseDto> response =
-                productService.getAllProducts(page, size);
+                productService.getAllProducts(page, size, sortBy, direction);
 
         return ResponseEntity.ok(
-                new ApiResponse<>("SUCCESS",
+                new ApiResponse<>(
+                        "SUCCESS",
                         "Products fetched successfully",
-                        response)
+                        response
+                )
         );
     }
 
