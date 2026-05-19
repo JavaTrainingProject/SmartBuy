@@ -41,4 +41,23 @@ public interface ProductService {
     getProductsByCategory(
             String categoryName
     );
+
+    Page<ProductResponseDto> getActiveProducts(
+            int page,
+            int size,
+            String sortBy,
+            String direction
+    );
+
+
+
+
+    ApiResponse<ProductPageRespnseDto>
+    getActiveProductsBySubCategory(
+            Long subCategoryId,
+            int page,
+            int size,
+            String sortBy,
+            String direction
+    );
 }

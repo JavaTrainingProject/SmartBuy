@@ -390,4 +390,82 @@ public class ProductServiceImpl implements ProductService {
 
         return dto;
     }
+
+    @Override
+    public Page<ProductResponseDto> getActiveProducts(
+            int page,
+            int size,
+            String sortBy,
+            String direction
+    ) {
+
+        Sort sort = direction.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+
+        Pageable pageable =
+                PageRequest.of(page, size, sort);
+
+        Page<ProductEntity> products =
+                productRepository.findByStatus(
+                        ProductStatus.ACTIVE,
+                        pageable
+                );
+
+        return products.map(this::mapToResponse);
     }
+
+
+
+
+
+    @Override
+    public ApiResponse<ProductPageRespnseDto>
+    getActiveProductsBySubCategory(
+            Long subCategoryId,
+            int page,
+            int size,
+            String sortBy,
+            String direction
+    ) {
+
+        Sort sort = direction.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+
+        Pageable pageable =
+                PageRequest.of(page, size, sort);
+
+        Page<ProductEntity> productPage =
+                productRepository
+                        .findBySubCategoryIdAndStatus(
+                                subCategoryId,
+                                ProductStatus.ACTIVE,
+                                pageable
+                        );
+
+        List<ProductResponseDto> productList =
+                productPage.getContent()
+                        .stream()
+                        .map(this::mapToResponse)
+                        .toList();
+
+        ProductPageRespnseDto dto =
+                new ProductPageRespnseDto();
+
+        dto.setProducts(productList);
+
+        dto.setTotalProducts(
+                productPage.getTotalElements()
+        );
+
+        return new ApiResponse<>(
+                "SUCCESS",
+                "Active subcategory products fetched successfully",
+                dto
+        );
+    }
+
+
+
+}
