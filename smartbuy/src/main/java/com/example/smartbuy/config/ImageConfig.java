@@ -1,30 +1,10 @@
 package com.example.smartbuy.config;
-
-//@Configuration
-//public class ImageConfig {
-
 import com.cloudinary.Cloudinary;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
 import java.util.HashMap;
 import java.util.Map;
-
-
-//    @Value("${file.upload-dir}")
-//    private String uploadDir;
-//
-//    @Override
-//    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-//
-//        registry.addResourceHandler("/uploads/**")
-//                .addResourceLocations("file:///" + uploadDir+"/");
-//    }
-//}
-//
-
-
 
     @Configuration
     public class ImageConfig {

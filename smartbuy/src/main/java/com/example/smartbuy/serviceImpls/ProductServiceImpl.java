@@ -366,13 +366,19 @@ public class ProductServiceImpl implements ProductService {
         if (product.getProductImages() != null &&
                 !product.getProductImages().isEmpty()) {
 
-            dto.setImageUrl(
+            dto.setImages(
 
                     product.getProductImages()
                             .stream()
                             .map(ProductImage::getImageUrl)
-                            .findFirst()
-                            .orElse(null)
+                            .toList()
+            );
+
+            dto.setImageUrl(
+
+                    product.getProductImages()
+                            .get(0)
+                            .getImageUrl()
             );
         }
 
@@ -414,10 +420,6 @@ public class ProductServiceImpl implements ProductService {
 
         return products.map(this::mapToResponse);
     }
-
-
-
-
 
     @Override
     public ApiResponse<ProductPageRespnseDto>
@@ -465,7 +467,5 @@ public class ProductServiceImpl implements ProductService {
                 dto
         );
     }
-
-
 
 }

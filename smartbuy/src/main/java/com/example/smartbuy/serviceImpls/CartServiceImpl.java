@@ -115,10 +115,19 @@ public class CartServiceImpl implements CartService {
                     product.getProductName()
             );
 
-            cart.setSubCategoryName(
-                    product.getSubCategory()
-                            .getSubCategoryName()
-            );
+
+
+            if (product.getSubCategory() != null) {
+
+                cart.setSubCategoryName(
+                        product.getSubCategory()
+                                .getSubCategoryName()
+                );
+
+            } else {
+
+                cart.setSubCategoryName("No Subcategory");
+            }
 
             cart.setProductDescription(
                     product.getProductDescription()
