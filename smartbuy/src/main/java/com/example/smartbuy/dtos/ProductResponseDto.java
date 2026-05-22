@@ -18,6 +18,19 @@ public class ProductResponseDto {
     private Long subCategoryId;
     private ProductStatus status;
 
+
+
+    private List<String> images;
+
+    public List<String> getImages() {
+        return images;
+    }
+
+    public void setImages(List<String> images) {
+        this.images = images;
+    }
+
+
     public ProductStatus getStatus() {
         return status;
     }

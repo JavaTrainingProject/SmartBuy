@@ -28,10 +28,14 @@ public class ProductEntity {
     private Integer quantity;
 
     private Integer stock;
-    @OneToMany(mappedBy="product", cascade=CascadeType.ALL, fetch=FetchType.LAZY)
-    private List<ProductImage> productImages;
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+
+    @OneToMany(
+            mappedBy = "product",
+            cascade = CascadeType.ALL,
+            fetch = FetchType.EAGER
+    )
+    private List<ProductImage> productImages;
     public List<ProductImage> getProductImages() {
         return productImages;
     }
