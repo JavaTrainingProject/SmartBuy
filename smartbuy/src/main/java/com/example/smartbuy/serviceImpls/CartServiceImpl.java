@@ -33,6 +33,10 @@ public class CartServiceImpl implements CartService {
         this.userRepository = userRepository;
     }
 
+    // =========================
+    // GET CURRENT USER
+    // =========================
+
     private Long getCurrentUserId() {
 
         var auth = SecurityContextHolder
@@ -40,22 +44,38 @@ public class CartServiceImpl implements CartService {
                 .getAuthentication();
 
         if (auth == null || auth.getName() == null) {
-            throw new RuntimeException("User not authenticated");
+
+            throw new RuntimeException(
+                    "User not authenticated"
+            );
         }
 
         String email = auth.getName();
 
         return userRepository.findByEmail(email)
                 .orElseThrow(() ->
-                        new RuntimeException("User not found"))
+                        new RuntimeException(
+                                "User not found"
+                        ))
                 .getId();
     }
 
+    // =========================
+    // ADD TO CART
+    // =========================
+
     @Override
-    public CartResponseDto addToCart(AddToCartRequestDto request) {
+    public CartResponseDto addToCart(
+            AddToCartRequestDto request
+    ) {
+
+        // VALIDATIONS
 
         if (request.getProductId() == null) {
-            throw new RuntimeException("Product id is required");
+
+            throw new RuntimeException(
+                    "Product id is required"
+            );
         }
 
         if (request.getQuantity() == null ||
@@ -68,10 +88,16 @@ public class CartServiceImpl implements CartService {
 
         Long userId = getCurrentUserId();
 
+        // GET PRODUCT
+
         ProductEntity product = productRepository
                 .findById(request.getProductId())
                 .orElseThrow(() ->
-                        new RuntimeException("Product not found"));
+                        new RuntimeException(
+                                "Product not found"
+                        ));
+
+        // STOCK CHECK
 
         if (product.getStock() <= 0) {
 
@@ -81,6 +107,8 @@ public class CartServiceImpl implements CartService {
             );
         }
 
+        // CHECK EXISTING CART ITEM
+
         CartProduct cart = cartRepository
                 .findByUserIdAndProductId(
                         userId,
@@ -89,10 +117,15 @@ public class CartServiceImpl implements CartService {
                 .orElse(null);
 
         int existingQuantity =
-                cart == null ? 0 : cart.getQuantity();
+                cart == null
+                        ? 0
+                        : cart.getQuantity();
 
         int finalQuantity =
-                existingQuantity + request.getQuantity();
+                existingQuantity +
+                        request.getQuantity();
+
+        // STOCK LIMIT CHECK
 
         if (finalQuantity > product.getStock()) {
 
@@ -102,6 +135,8 @@ public class CartServiceImpl implements CartService {
                             + " items available in stock"
             );
         }
+
+        // CREATE NEW CART ITEM
 
         if (cart == null) {
 
@@ -115,7 +150,9 @@ public class CartServiceImpl implements CartService {
                     product.getProductName()
             );
 
-
+            // =========================
+            // FIXED NULL SUBCATEGORY ISSUE
+            // =========================
 
             if (product.getSubCategory() != null) {
 
@@ -126,7 +163,9 @@ public class CartServiceImpl implements CartService {
 
             } else {
 
-                cart.setSubCategoryName("No Subcategory");
+                cart.setSubCategoryName(
+                        "No SubCategory"
+                );
             }
 
             cart.setProductDescription(
@@ -135,11 +174,18 @@ public class CartServiceImpl implements CartService {
 
             cart.setPrice(product.getPrice());
 
-            cart.setQuantity(request.getQuantity());
+            cart.setQuantity(
+                    request.getQuantity()
+            );
 
-            cart.setImageUrl(product.getImageUrl());
+            cart.setImageUrl(
+                    product.getImageUrl()
+            );
 
-        } else {
+        }
+
+        // UPDATE EXISTING CART ITEM
+        else {
 
             cart.setQuantity(finalQuantity);
         }
@@ -150,17 +196,25 @@ public class CartServiceImpl implements CartService {
         return CartMapper.toDto(saved);
     }
 
+    // =========================
+    // GET CART
+    // =========================
+
     @Override
     public List<CartResponseDto> getCart() {
 
         Long userId = getCurrentUserId();
 
-        return cartRepository.
-                findByUserId(userId)
+        return cartRepository
+                .findByUserId(userId)
                 .stream()
                 .map(CartMapper::toDto)
                 .toList();
     }
+
+    // =========================
+    // REMOVE ITEM
+    // =========================
 
     @Override
     public void removeItem(Long cartId) {
@@ -183,6 +237,10 @@ public class CartServiceImpl implements CartService {
         cartRepository.delete(cart);
     }
 
+    // =========================
+    // CLEAR CART
+    // =========================
+
     @Override
     public void clearCart() {
 
@@ -201,6 +259,10 @@ public class CartServiceImpl implements CartService {
         cartRepository.deleteAll(items);
     }
 
+    // =========================
+    // UPDATE QUANTITY
+    // =========================
+
     @Override
     @Transactional
     public CartResponseDto updateQuantity(
@@ -208,7 +270,8 @@ public class CartServiceImpl implements CartService {
             Integer quantity
     ) {
 
-        if (quantity == null || quantity <= 0) {
+        if (quantity == null ||
+                quantity <= 0) {
 
             throw new RuntimeException(
                     "Quantity must be greater than 0"
@@ -237,6 +300,8 @@ public class CartServiceImpl implements CartService {
                                 "Product not found"
                         ));
 
+        // OUT OF STOCK
+
         if (product.getStock() <= 0) {
 
             throw new RuntimeException(
@@ -244,6 +309,8 @@ public class CartServiceImpl implements CartService {
                             + " is out of stock"
             );
         }
+
+        // STOCK LIMIT
 
         if (quantity > product.getStock()) {
 
