@@ -47,13 +47,23 @@ public class GlobalException {
     }
 
     @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<Map<String, String>> handleRuntimeException(RuntimeException ex) {
+    public ResponseEntity<ApiResponse<String>> handleRuntimeException(
+            RuntimeException ex
+    ) {
 
-        Map<String, String> error = new HashMap<>();
-        error.put("message", ex.getMessage());
+        ApiResponse<String> response =
+                new ApiResponse<>(
+                        "ERROR",
+                        ex.getMessage(),
+                        null
+                );
 
-        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(
+                response,
+                HttpStatus.BAD_REQUEST
+        );
     }
+
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGlobalException(Exception ex) {
