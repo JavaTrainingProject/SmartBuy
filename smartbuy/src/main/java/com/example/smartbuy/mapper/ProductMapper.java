@@ -60,14 +60,21 @@ public class ProductMapper {
             if (entity.getProductImages() != null &&
                     !entity.getProductImages().isEmpty()) {
 
-                dto.setImageUrl(
+                dto.setImages(
 
                         entity.getProductImages()
                                 .stream()
                                 .map(ProductImage::getImageUrl)
-                                .findFirst()
-                                .orElse(null)
+                                .toList()
                 );
+
+                dto.setImageUrl(
+
+                        entity.getProductImages()
+                                .get(0)
+                                .getImageUrl()
+                );
+
             }
 
 
