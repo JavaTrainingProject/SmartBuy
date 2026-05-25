@@ -21,7 +21,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -35,22 +34,18 @@ public class ProductServiceImpl implements ProductService {
 
         private final SubCategoryRepository subCategoryRepository;
 
-        private final ProductImageRepository imageRepository;
-
         private final Cloudinary cloudinary;
 
         public ProductServiceImpl(
                 ProductRepository productRepository,
                 CategoryRepository categoryRepository,
                 SubCategoryRepository subCategoryRepository,
-                ProductImageRepository imageRepository,
                 Cloudinary cloudinary
         ) {
 
             this.productRepository = productRepository;
             this.categoryRepository = categoryRepository;
             this.subCategoryRepository = subCategoryRepository;
-            this.imageRepository = imageRepository;
             this.cloudinary = cloudinary;
         }
 
@@ -109,7 +104,6 @@ public class ProductServiceImpl implements ProductService {
 
             product.setSubCategory(subCategory);
 
-
             product.setStatus(ProductStatus.ACTIVE);
 
 
@@ -124,13 +118,16 @@ public class ProductServiceImpl implements ProductService {
             ProductEntity savedProduct =
                     productRepository.save(product);
 
-
             if (images != null && !images.isEmpty()) {
 
                 saveImages(images, savedProduct);
+
+                savedProduct =
+                        productRepository.save(savedProduct);
             }
 
             return mapToResponse(savedProduct);
+
         }
 
     @Override
@@ -167,42 +164,51 @@ public class ProductServiceImpl implements ProductService {
             return mapToResponse(product);
         }
 
-        @Override
-        public ProductResponseDto updateProduct(
-                Long id,
-                ProductRequestDto dto,
-                List<MultipartFile> images
-        ) {
 
-            ProductEntity product =
-                    productRepository.findById(id)
-                            .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+    @Override
+    public ProductResponseDto updateProduct(
+            Long id,
+            ProductRequestDto dto,
+            List<MultipartFile> images
+    ) {
 
-            product.setProductName(dto.getProduct_name());
+        ProductEntity product =
+                productRepository.findById(id)
+                        .orElseThrow(() ->
+                                new ResourceNotFoundException("Product not found"));
 
-            product.setProductDescription(dto.getProduct_description());
+        product.setProductName(dto.getProduct_name());
 
-            product.setPrice(dto.getProduct_price());
+        product.setProductDescription(dto.getProduct_description());
 
-            product.setQuantity(dto.getQuantity());
+        product.setPrice(dto.getProduct_price());
 
-            product.setStock(dto.getStock());
+        product.setQuantity(dto.getQuantity());
 
-            product.setUpdatedAt(LocalDateTime.now());
+        product.setStock(dto.getStock());
 
-            if (images != null && !images.isEmpty()) {
+        product.setUpdatedAt(LocalDateTime.now());
 
-                String thumbnail = uploadImage(images.get(0));
+        if (images != null && !images.isEmpty()) {
 
-                product.setImageUrl(thumbnail);
+            product.getProductImages().clear();
 
-                saveImages(images, product);
-            }
+            product.setImageUrl(null);
 
-            ProductEntity updatedProduct = productRepository.save(product);
+            String thumbnail = uploadImage(images.get(0));
 
-            return mapToResponse(updatedProduct);
+            product.setImageUrl(thumbnail);
+
+            saveImages(images, product);
+
+            productRepository.save(product);
         }
+
+        ProductEntity updatedProduct =
+                productRepository.save(product);
+
+        return mapToResponse(updatedProduct);
+    }
 
     @Override
     public String deleteProduct(Long id) {
@@ -305,31 +311,34 @@ public class ProductServiceImpl implements ProductService {
             }
         }
 
+
     private void saveImages(List<MultipartFile> images, ProductEntity product) {
 
         if (images == null || images.isEmpty()) {
-
             return;
         }
 
-        for (int i = 0; i < images.size(); i++) {
-
-            MultipartFile file = images.get(i);
+        for (MultipartFile file : images) {
 
             try {
 
                 Map uploadResult =
-                        cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap("resource_type", "auto"));
+                        cloudinary.uploader().upload(
+                                file.getBytes(),
+                                ObjectUtils.asMap("resource_type", "auto")
+                        );
 
-                String imageUrl = uploadResult.get("secure_url").toString();
+                String imageUrl =
+                        uploadResult.get("secure_url").toString();
 
-                ProductImage productImage = new ProductImage();
+                ProductImage productImage =
+                        new ProductImage();
 
                 productImage.setImageUrl(imageUrl);
 
                 productImage.setProduct(product);
 
-                imageRepository.save(productImage);
+                product.getProductImages().add(productImage);
 
             } catch (Exception e) {
 

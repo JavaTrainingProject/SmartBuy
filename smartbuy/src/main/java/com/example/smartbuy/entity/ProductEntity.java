@@ -7,6 +7,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -33,9 +34,11 @@ public class ProductEntity {
     @OneToMany(
             mappedBy = "product",
             cascade = CascadeType.ALL,
+            orphanRemoval = true,
             fetch = FetchType.EAGER
     )
-    private List<ProductImage> productImages;
+    private List<ProductImage> productImages = new ArrayList<>();
+
     public List<ProductImage> getProductImages() {
         return productImages;
     }
