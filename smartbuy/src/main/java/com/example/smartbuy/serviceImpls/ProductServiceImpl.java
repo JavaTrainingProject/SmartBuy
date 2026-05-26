@@ -7,6 +7,7 @@ import com.example.smartbuy.dtos.ProductRequestDto;
 import com.example.smartbuy.dtos.ProductResponseDto;
 import com.example.smartbuy.entity.*;
 import com.example.smartbuy.enums.ProductStatus;
+import com.example.smartbuy.enums.Status;
 import com.example.smartbuy.exception.ResourceNotFoundException;
 import com.example.smartbuy.repository.CategoryRepository;
 import com.example.smartbuy.repository.ProductImageRepository;
@@ -276,7 +277,14 @@ public class ProductServiceImpl implements ProductService {
         public List<ProductResponseDto>
         getProductsByCategory(String categoryName) {
 
-            return productRepository.findByCategory_CategoryName(categoryName)
+
+            return productRepository
+                    .findByCategory_CategoryNameAndStatusAndSubCategory_StatusAndCategory_Status(
+                            categoryName,
+                            ProductStatus.ACTIVE,
+                            Status.ACTIVE,
+                            Status.ACTIVE
+                    )
                     .stream()
                     .map(this::mapToResponse)
                     .toList();
@@ -422,10 +430,15 @@ public class ProductServiceImpl implements ProductService {
                 PageRequest.of(page, size, sort);
 
         Page<ProductEntity> products =
-                productRepository.findByStatus(
-                        ProductStatus.ACTIVE,
-                        pageable
-                );
+
+
+                productRepository
+                        .findByStatusAndSubCategory_StatusAndCategory_Status(
+                                ProductStatus.ACTIVE,
+                                Status.ACTIVE,
+                                Status.ACTIVE,
+                                pageable
+                        );
 
         return products.map(this::mapToResponse);
     }
@@ -449,9 +462,12 @@ public class ProductServiceImpl implements ProductService {
 
         Page<ProductEntity> productPage =
                 productRepository
-                        .findBySubCategoryIdAndStatus(
+
+                        .findBySubCategoryIdAndStatusAndSubCategory_StatusAndCategory_Status(
                                 subCategoryId,
                                 ProductStatus.ACTIVE,
+                                Status.ACTIVE,
+                                Status.ACTIVE,
                                 pageable
                         );
 

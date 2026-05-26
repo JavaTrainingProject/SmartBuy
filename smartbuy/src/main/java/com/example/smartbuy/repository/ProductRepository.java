@@ -40,4 +40,33 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
  findByCategory_CategoryName(
          String categoryName
  );
+
+
+
+
+    Page<ProductEntity>
+    findByStatusAndSubCategory_StatusAndCategory_Status(
+            ProductStatus productStatus,
+            Status subCategoryStatus,
+            Status categoryStatus,
+            Pageable pageable
+    );
+
+    Page<ProductEntity>
+    findBySubCategoryIdAndStatusAndSubCategory_StatusAndCategory_Status(
+            Long subCategoryId,
+            ProductStatus productStatus,
+            Status subCategoryStatus,
+            Status categoryStatus,
+            Pageable pageable
+    );
+
+    List<ProductEntity>
+    findByCategory_CategoryNameAndStatusAndSubCategory_StatusAndCategory_Status(
+            String categoryName,
+            ProductStatus productStatus,
+            Status subCategoryStatus,
+            Status categoryStatus
+    );
+
 }
